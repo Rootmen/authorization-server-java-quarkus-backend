@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Definition parser="v3">
+    <QuerySet ID="GET_ALL_USER_ACCOUNT">
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT
+                    account_id,
+                    account_name,
+                    account_mail,
+                    account_password_verifier,
+                    account_salt,
+                    account_last_password_update,
+                    account_password_reset_interval
+                    FROM dnauthorization.users_account;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+</Definition>

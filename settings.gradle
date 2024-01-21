@@ -1,0 +1,22 @@
+pluginManagement {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+		mavenLocal()
+	}
+	plugins {
+		id "${quarkusPluginId}" version "${quarkusPluginVersion}"
+	}
+}
+
+sourceControl {
+	gitRepository("https://github.com/Rootmen/java-db-request.git") {
+		producesModule("ru.iedt.database.request:database-controller")
+		producesModule("ru.iedt.database.request:store")
+	}
+}
+
+rootProject.name = 'authorization-server-quarkus'
+//модули
+include ':sourse:modules:submodules:submodules-database-controller'
+include ':sourse:modules:exception'
