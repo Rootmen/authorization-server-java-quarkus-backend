@@ -22,7 +22,7 @@ public class UsersModel {
 
     public Uni<UserAccount> getUserAccount(UUID userId, PgPool client) {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
-        parameters.put("", new ParameterInput("USER_UUID", userId.toString()));
+        parameters.put("USER_UUID", new ParameterInput( "USER_UUID", userId.toString()));
         return databaseController
                 .runningQuerySet("users_model", "GET_USER_ACCOUNT_FROM_ID", parameters, client)
                 .onItem()
@@ -30,7 +30,6 @@ public class UsersModel {
                 .onItem().transform(RowSet::iterator)
                 .onItem().transform(iterator -> iterator.hasNext() ? UserAccount.from(iterator.next()) : null);
     }
-
     public Multi<UserAccount> getAllUserAccount(PgPool client) {
         return databaseController
                 .runningQuerySet("users_model", "GET_ALL_USER_ACCOUNT", new HashMap<>(), client)
