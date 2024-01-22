@@ -13,11 +13,12 @@ dependencies {
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-arc'
 
-    implementation 'ru.iedt.database.request:store:1.0.2'
-    implementation 'ru.iedt.database.request:database-controller:1.0.2'
+    implementation 'ru.iedt.database.request:store:1.0.3'
+    implementation 'ru.iedt.database.request:database-controller:1.0.3'
     implementation project(path: ':sourse:modules:exception')
 
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'junit:junit:4.13.1'
 }
 
 group "${applicationGroup}"

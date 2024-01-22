@@ -1,16 +1,23 @@
--- Создание схемы
-CREATE SCHEMA IF NOT EXISTS dnauthorization;
+-- СОЗДАНИЕ СХЕМЫ
+CREATE SCHEMA IF NOT EXISTS DNAUTHORIZATION;
 
--- Таблица dnauthorization.users_account
-CREATE TABLE IF NOT EXISTS dnauthorization.users_account
+-- ТАБЛИЦА DNAUTHORIZATION.USERS_ACCOUNT
+CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_ACCOUNT
 (
-    account_id                      uuid PRIMARY KEY default gen_random_uuid(),
-    account_name                    text                                       NOT NULL UNIQUE,
-    account_mail                    text                                       NOT NULL UNIQUE,
-    account_password_verifier       text                                       NOT NULL,
-    account_salt                    text                                       NOT NULL,
-    account_last_password_update    timestamp        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    account_password_reset_interval integer          DEFAULT 90                NOT NULL
+    ACCOUNT_ID                      UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
+    ACCOUNT_NAME                    TEXT                                       NOT NULL UNIQUE,
+    ACCOUNT_MAIL                    TEXT                                       NOT NULL UNIQUE,
+    ACCOUNT_PASSWORD_VERIFIER       TEXT                                       NOT NULL,
+    ACCOUNT_SALT                    TEXT                                       NOT NULL,
+    ACCOUNT_LAST_PASSWORD_UPDATE    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    ACCOUNT_PASSWORD_RESET_INTERVAL INTEGER          DEFAULT 90                NOT NULL
 );
 
-
+INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
+VALUES ('TEST', 'TEST', 'TEST', 'TEST');
+INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
+VALUES ('TEST2', 'TEST2', 'TEST2', 'TEST');
+INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
+VALUES ('TEST3', 'TEST3', 'TEST3', 'TEST3');
+INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
+VALUES ('39f311a4-837e-4fff-b6bf-55cf2a7b04ad'::uuid,'TEST3', 'TEST3', 'TEST3', 'TEST3');

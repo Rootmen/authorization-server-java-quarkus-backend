@@ -17,4 +17,25 @@
             </SQL>
         </Query>
     </QuerySet>
+    <QuerySet ID="GET_USER_ACCOUNT_FROM_ID">
+        <Parameters>
+            <Parameter name="USER_UUID" type="uuid"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT
+                    account_id,
+                    account_name,
+                    account_mail,
+                    account_password_verifier,
+                    account_salt,
+                    account_last_password_update,
+                    account_password_reset_interval
+                    FROM dnauthorization.users_account
+                    where account_id = $USER_UUID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
 </Definition>
