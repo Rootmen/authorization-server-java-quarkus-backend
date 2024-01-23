@@ -16,7 +16,9 @@ sourceControl {
 	}
 }
 
+
 rootProject.name = 'authorization-server-quarkus'
 //модули
 include ':sourse:modules:submodules:submodules-database-controller'
+include ':sourse:modules:submodules:submodules-cryptography'
 include ':sourse:modules:exception'

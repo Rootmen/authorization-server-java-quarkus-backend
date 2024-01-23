@@ -1,18 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Definition parser="v3">
+    <QuerySet ID="GET_USER_ACCOUNT">
+        <Parameters>
+            <Parameter name="USER_UUID" type="uuid">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND ACCOUNT_ID = $USER_UUID$]]></Otherwise>
+            </Parameter>
+            <Parameter name="USER_NAME" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND ACCOUNT_NAME = $USER_NAME$]]></Otherwise>
+            </Parameter>
+            <Parameter name="USER_MAIL" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND ACCOUNT_MAIL = $USER_MAIL$]]></Otherwise>
+            </Parameter>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ACCOUNT_ID,
+                           ACCOUNT_NAME,
+                           ACCOUNT_MAIL,
+                           ACCOUNT_PASSWORD_VERIFIER,
+                           ACCOUNT_SALT,
+                           ACCOUNT_LAST_PASSWORD_UPDATE,
+                           ACCOUNT_PASSWORD_RESET_INTERVAL
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT
+                    WHERE TRUE $USER_UUID$ $USER_NAME$ $USER_MAIL$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
     <QuerySet ID="GET_ALL_USER_ACCOUNT">
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    SELECT
-                    account_id,
-                    account_name,
-                    account_mail,
-                    account_password_verifier,
-                    account_salt,
-                    account_last_password_update,
-                    account_password_reset_interval
-                    FROM dnauthorization.users_account;
+                    SELECT ACCOUNT_ID,
+                           ACCOUNT_NAME,
+                           ACCOUNT_MAIL,
+                           ACCOUNT_PASSWORD_VERIFIER,
+                           ACCOUNT_SALT,
+                           ACCOUNT_LAST_PASSWORD_UPDATE,
+                           ACCOUNT_PASSWORD_RESET_INTERVAL
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT;
                 ]]>
             </SQL>
         </Query>
@@ -24,18 +54,114 @@
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    SELECT
-                    account_id,
-                    account_name,
-                    account_mail,
-                    account_password_verifier,
-                    account_salt,
-                    account_last_password_update,
-                    account_password_reset_interval
-                    FROM dnauthorization.users_account
-                    where account_id = $USER_UUID$;
+                    SELECT ACCOUNT_ID,
+                           ACCOUNT_NAME,
+                           ACCOUNT_MAIL,
+                           ACCOUNT_PASSWORD_VERIFIER,
+                           ACCOUNT_SALT,
+                           ACCOUNT_LAST_PASSWORD_UPDATE,
+                           ACCOUNT_PASSWORD_RESET_INTERVAL
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT
+                    WHERE ACCOUNT_ID = $USER_UUID$;
                 ]]>
             </SQL>
         </Query>
     </QuerySet>
+    <QuerySet ID="GET_USER_ACCOUNT_FROM_NAME">
+        <Parameters>
+            <Parameter name="USER_NAME" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ACCOUNT_ID,
+                           ACCOUNT_NAME,
+                           ACCOUNT_MAIL,
+                           ACCOUNT_PASSWORD_VERIFIER,
+                           ACCOUNT_SALT,
+                           ACCOUNT_LAST_PASSWORD_UPDATE,
+                           ACCOUNT_PASSWORD_RESET_INTERVAL
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT
+                    WHERE ACCOUNT_NAME = $USER_NAME$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="GET_USER_ACCOUNT_FROM_MAIL">
+        <Parameters>
+            <Parameter name="USER_MAIL" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ACCOUNT_ID,
+                           ACCOUNT_NAME,
+                           ACCOUNT_MAIL,
+                           ACCOUNT_PASSWORD_VERIFIER,
+                           ACCOUNT_SALT,
+                           ACCOUNT_LAST_PASSWORD_UPDATE,
+                           ACCOUNT_PASSWORD_RESET_INTERVAL
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT
+                    WHERE ACCOUNT_MAIL = $USER_MAIL$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_USER_ACCOUNT">
+        <Parameters>
+            <Parameter name="USER_NAME" type="string"/>
+            <Parameter name="USER_MAIL" type="string"/>
+            <Parameter name="PASSWORD_VERIFIER" type="string"/>
+            <Parameter name="SALT" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
+                    VALUES ($USER_NAME$, $USER_MAIL$, $PASSWORD_VERIFIER$, $SALT$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="GET_ALL_USER_INFO">
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ACCOUNT_ID,
+                           USER_SURNAME,
+                           USER_NAME,
+                           USER_PATRONYMIC,
+                           USER_DATE_OF_BIRTH,
+                           USER_PERSONAL_NUMBER,
+                           USER_STRUCTURE,
+                           USER_CURRENT_POST,
+                           USER_PHONE,
+                           USER_OFFICE
+                    FROM DNAUTHORIZATION.USERS_INFO;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="GET_USER_INFO_FROM_ID">
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ACCOUNT_ID,
+                           USER_SURNAME,
+                           USER_NAME,
+                           USER_PATRONYMIC,
+                           USER_DATE_OF_BIRTH,
+                           USER_PERSONAL_NUMBER,
+                           USER_STRUCTURE,
+                           USER_CURRENT_POST,
+                           USER_PHONE,
+                           USER_OFFICE
+                    FROM DNAUTHORIZATION.USERS_ACCOUNT
+                    WHERE ACCOUNT_ID = $USER_UUID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+
 </Definition>

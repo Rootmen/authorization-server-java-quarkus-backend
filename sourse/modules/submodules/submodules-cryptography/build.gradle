@@ -10,12 +10,7 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-reactive-pg-client'
-    implementation 'io.quarkus:quarkus-arc'
-    implementation 'ru.iedt.database.request:store:1.0.7'
-    implementation 'ru.iedt.database.request:database-controller:1.0.7'
     implementation project(path: ':sourse:modules:exception')
-    testImplementation 'io.quarkus:quarkus-junit5'
 }
 
 group "${applicationGroup}"
