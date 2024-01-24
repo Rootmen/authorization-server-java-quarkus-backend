@@ -1,20 +1,16 @@
-package ru.iedt.database.request.controller;
+package ru.iedt.authorization.api.users;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.vertx.mutiny.pgclient.PgPool;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.*;
+import ru.iedt.authorization.api.users.dto.UserAccount;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.UUID;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import ru.iedt.authorization.api.users.UsersModel;
-import ru.iedt.authorization.api.users.dto.UserAccount;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @QuarkusTest
@@ -25,44 +21,76 @@ public class UsersServiceTest {
     @Inject
     PgPool client;
 
-    @BeforeAll
     void setup() throws IOException {
         String init = readFromInputStream(UsersServiceTest.class.getResourceAsStream("/init.sql"));
         client.query(init).execute().await().indefinitely();
     }
 
+    @RepeatedTest(55)
+    void testAddUserAccount() throws IOException {
+        this.setup();
+        System.out.println("Старт теста testAddUserAccount");
+        System.out.println("Проверка добавления нового пользователя");
+        String username = getRandomString(10);
+        String userMail = getRandomString(10);
+        String passwordVerifier = getRandomString(25);
+        String salt = getRandomString(5);
+
+        UserAccount userAccountInsert = usersModel
+                .addUserAccount(username, userMail, passwordVerifier, salt, client)
+                .await()
+                .indefinitely();
+        
+        UserAccount userAccountName =
+                usersModel.getUserAccount(username, client).await().indefinitely();
+
+        UserAccount userAccountUUID = usersModel
+                .getUserAccount(userAccountInsert.getAccountId(), client)
+                .await()
+                .indefinitely();
+
+        Assertions.assertEquals(userAccountInsert, userAccountName, "Вставка данных и дальнейший поиск не удался");
+        Assertions.assertEquals(userAccountInsert, userAccountUUID, "Вставка данных и дальнейший поиск не удался");
+        System.out.printf("Найден объект = %s\n", userAccountInsert);
+        System.out.printf("Поиск по имени = %s\n", userAccountName);
+        System.out.printf("Поиск по UUID = %s\n", userAccountUUID);
+        System.out.println("Тест пройден");
+    }
+
     @Test
-    void testLoadAllUsers() {
-        int userCount = 4;
-        System.out.println("Старт теста testLoadAllUsers");
-        System.out.println("Проверка загрузки информации со всех аккаунтов");
-        List<UserAccount> userAccounts =
+    void testAddUserAccount2() throws IOException {
+        this.setup();
+        System.out.println("Старт теста testAddUserAccount");
+        System.out.println("Проверка добавления нового пользователя");
+        String username = getRandomString(10);
+        String userMail = getRandomString(10);
+        String passwordVerifier = getRandomString(25);
+        String salt = getRandomString(5);
+
+        UserAccount userAccountInsert = usersModel
+                .addUserAccount(username, userMail, passwordVerifier, salt, client)
+                .await()
+                .indefinitely();
+
+        List<UserAccount> userAccountNameAll =
                 usersModel.getAllUserAccount(client).collect().asList().await().indefinitely();
-        Assertions.assertEquals(userAccounts.size(), userCount, "UserAccount загрузил не верное количество записей");
-        System.out.printf("Загружено %s из %s записей\n", userAccounts.size(), userCount);
-        System.out.println("Тест пройден");
-    }
+        UserAccount userAccountName =
+                usersModel.getUserAccount(username, client).await().indefinitely();
 
-    @Test
-    void testLoadUsersFromUUID() {
-        System.out.println("Старт теста testLoadUsersFromUUID");
-        System.out.println("Проверка поиска информации по UUID");
-        UUID uuidTest = UUID.fromString("39f311a4-837e-4fff-b6bf-55cf2a7b04ad");
-        UserAccount userAccountUUIDTest =
-                usersModel.getUserAccount(uuidTest, client).await().indefinitely();
-        Assertions.assertEquals(userAccountUUIDTest.getAccountId(), uuidTest, "Поиск по UUID не сработал");
-        System.out.printf("UUID = %s искался %s\n", userAccountUUIDTest.getAccountId(), uuidTest);
-        System.out.println("Тест пройден");
-    }
+        UserAccount userAccountUUID = usersModel
+                .getUserAccount(userAccountInsert.getAccountId(), client)
+                .await()
+                .indefinitely();
+        userAccountNameAll =
+                usersModel.getAllUserAccount(client).collect().asList().await().indefinitely();
+        userAccountNameAll =
+                usersModel.getAllUserAccount(client).collect().asList().await().indefinitely();
 
-    @Test
-    void testLoadUsersFromName() {
-        System.out.println("Старт теста testLoadUsersFromName");
-        System.out.println("Проверка поиска информации по username");
-        UserAccount userAccountUUIDTest =
-                usersModel.getUserAccount("TEST", client).await().indefinitely();
-        Assertions.assertEquals(userAccountUUIDTest.getAccountName(), "TEST", "Поиск по UUID не сработал");
-        System.out.printf("username = %s искался %s\n", userAccountUUIDTest.getAccountName(), "TEST");
+        Assertions.assertEquals(userAccountInsert, userAccountName, "Вставка данных и дальнейший поиск не удался");
+        Assertions.assertEquals(userAccountInsert, userAccountUUID, "Вставка данных и дальнейший поиск не удался");
+        System.out.printf("Найден объект = %s\n", userAccountInsert);
+        System.out.printf("Поиск по имени = %s\n", userAccountName);
+        System.out.printf("Поиск по UUID = %s\n", userAccountUUID);
         System.out.println("Тест пройден");
     }
 
@@ -75,5 +103,16 @@ public class UsersServiceTest {
             }
         }
         return resultStringBuilder.toString();
+    }
+
+    String AlphaNumericStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789”;";
+
+    public String getRandomString(int size) {
+        StringBuilder result = new StringBuilder(size);
+        for (int g = 0; g < size; g++) {
+            int ch = (int)(AlphaNumericStr.length() * Math.random());
+            result.append(AlphaNumericStr.charAt(ch));
+        }
+        return result.toString();
     }
 }
