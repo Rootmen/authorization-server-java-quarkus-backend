@@ -7,12 +7,13 @@ import java.util.UUID;
 
 public class UserAccount {
     private final UUID account_id;
-    private final String account_mail;
-    private final String account_name;
-    private final String account_password_verifier;
-    private final String account_salt;
+    private String account_mail;
+    private String account_name;
+    private String account_password_verifier;
+    private String account_salt;
     private final LocalDateTime account_last_password_update;
-    private final int account_password_reset_interval;
+    private int account_password_reset_interval;
+    private final boolean is_deprecated;
 
     public UserAccount(
             UUID account_id,
@@ -21,7 +22,8 @@ public class UserAccount {
             String account_password_verifier,
             String account_salt,
             LocalDateTime account_last_password_update,
-            int account_password_reset_interval) {
+            int account_password_reset_interval,
+            boolean is_deprecated) {
         this.account_id = account_id;
         this.account_name = account_name;
         this.account_mail = account_mail;
@@ -29,6 +31,7 @@ public class UserAccount {
         this.account_salt = account_salt;
         this.account_last_password_update = account_last_password_update;
         this.account_password_reset_interval = account_password_reset_interval;
+        this.is_deprecated = is_deprecated;
     }
 
     public UUID getAccountId() {
@@ -59,6 +62,10 @@ public class UserAccount {
         return account_password_reset_interval;
     }
 
+    public boolean isDeprecated() {
+        return is_deprecated;
+    }
+
     public static UserAccount from(Row row) {
         return new UserAccount(
                 row.getUUID("account_id"),
@@ -67,7 +74,8 @@ public class UserAccount {
                 row.getString("account_password_verifier"),
                 row.getString("account_salt"),
                 row.getLocalDateTime("account_last_password_update"),
-                row.getInteger("account_password_reset_interval"));
+                row.getInteger("account_password_reset_interval"),
+                row.getBoolean("account_is_deprecated"));
     }
 
     @Override
@@ -109,5 +117,30 @@ public class UserAccount {
         result = 31 * result + account_last_password_update.hashCode();
         result = 31 * result + account_password_reset_interval;
         return result;
+    }
+
+    public UserAccount setAccountName(String account_name) {
+        this.account_name = account_name;
+        return this;
+    }
+
+    public UserAccount setAccountMail(String account_mail) {
+        this.account_mail = account_mail;
+        return this;
+    }
+
+    public UserAccount setAccountPasswordVerifier(String account_password_verifier) {
+        this.account_password_verifier = account_password_verifier;
+        return this;
+    }
+
+    public UserAccount setAccountSalt(String account_salt) {
+        this.account_salt = account_salt;
+        return this;
+    }
+
+    public UserAccount setAccountPasswordResetInterval(int account_password_reset_interval) {
+        this.account_password_reset_interval = account_password_reset_interval;
+        return this;
     }
 }

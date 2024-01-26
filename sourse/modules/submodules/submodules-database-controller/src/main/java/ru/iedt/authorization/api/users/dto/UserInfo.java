@@ -7,15 +7,15 @@ import java.util.UUID;
 
 public class UserInfo {
     private final UUID account_id;
-    private final String user_surname;
-    private final String user_name;
-    private final String user_patronymic;
-    private final LocalDate user_date_of_birth;
-    private final int user_personal_number;
-    private final int user_structure;
-    private final int user_current_post;
-    private final String user_phone;
-    private final String user_office;
+    private String user_surname;
+    private String user_name;
+    private String user_patronymic;
+    private LocalDate user_date_of_birth;
+    private int user_personal_number;
+    private int user_structure;
+    private UUID user_current_post;
+    private String user_phone;
+    private String user_office;
 
     public UserInfo(
             UUID account_id,
@@ -25,7 +25,7 @@ public class UserInfo {
             LocalDate user_date_of_birth,
             int user_personal_number,
             int user_structure,
-            int user_current_post,
+            UUID user_current_post,
             String user_phone,
             String user_office) {
         this.account_id = account_id;
@@ -68,7 +68,7 @@ public class UserInfo {
         return user_structure;
     }
 
-    public int getUserCurrentPost() {
+    public UUID getUserCurrentPost() {
         return user_current_post;
     }
 
@@ -81,7 +81,6 @@ public class UserInfo {
     }
 
     public static UserInfo from(Row row) {
-
         return new UserInfo(
                 row.getUUID("account_id"),
                 row.getString("user_surname"),
@@ -90,7 +89,7 @@ public class UserInfo {
                 row.getLocalDate("user_date_of_birth"),
                 row.getInteger("user_personal_number"),
                 row.getInteger("user_structure"),
-                row.getInteger("user_current_post"),
+                row.getUUID("user_current_post"),
                 row.getString("user_phone"),
                 row.getString("user_office"));
     }
@@ -109,5 +108,41 @@ public class UserInfo {
                 .add("user_phone='" + user_phone + "'")
                 .add("user_office='" + user_office + "'")
                 .toString();
+    }
+
+    public void setUserSurname(String user_surname) {
+        this.user_surname = user_surname;
+    }
+
+    public void setUsername(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public void setUserPatronymic(String user_patronymic) {
+        this.user_patronymic = user_patronymic;
+    }
+
+    public void setUserDateOfBirth(LocalDate user_date_of_birth) {
+        this.user_date_of_birth = user_date_of_birth;
+    }
+
+    public void setUserPersonalNumber(int user_personal_number) {
+        this.user_personal_number = user_personal_number;
+    }
+
+    public void setUserStructure(int user_structure) {
+        this.user_structure = user_structure;
+    }
+
+    public void setUserCurrentPost(UUID user_current_post) {
+        this.user_current_post = user_current_post;
+    }
+
+    public void setUserPhone(String user_phone) {
+        this.user_phone = user_phone;
+    }
+
+    public void setUserOffice(String user_office) {
+        this.user_office = user_office;
     }
 }

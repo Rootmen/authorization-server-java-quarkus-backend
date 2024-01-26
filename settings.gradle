@@ -13,6 +13,7 @@ sourceControl {
 	gitRepository("https://github.com/Rootmen/java-db-request.git") {
 		producesModule("ru.iedt.database.request:database-controller")
 		producesModule("ru.iedt.database.request:store")
+		producesModule("ru.iedt.database.request:structures")
 	}
 }
 

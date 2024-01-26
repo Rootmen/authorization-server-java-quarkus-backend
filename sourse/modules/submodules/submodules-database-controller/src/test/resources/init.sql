@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_ACCOUNT
     ACCOUNT_PASSWORD_VERIFIER       TEXT                                NOT NULL,
     ACCOUNT_SALT                    TEXT                                NOT NULL,
     ACCOUNT_LAST_PASSWORD_UPDATE    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    ACCOUNT_PASSWORD_RESET_INTERVAL INTEGER   DEFAULT 0                 NOT NULL
+    ACCOUNT_PASSWORD_RESET_INTERVAL INTEGER   DEFAULT 0                 NOT NULL,
+    ACCOUNT_IS_DEPRECATED           BOOLEAN   DEFAULT FALSE             NOT NULL
 );
 
 -- Добавление комментариев к таблице dnauthorization.users_account и её столбцам
@@ -27,6 +28,7 @@ COMMENT ON COLUMN dnauthorization.users_account.account_password_verifier IS 'В
 COMMENT ON COLUMN dnauthorization.users_account.account_salt IS 'Случайная строка, используемая для хеширования пароля';
 COMMENT ON COLUMN dnauthorization.users_account.account_last_password_update IS 'Дата и время последнего обновления пароля';
 COMMENT ON COLUMN dnauthorization.users_account.account_password_reset_interval IS 'Интервал сброса пароля в днях';
+COMMENT ON COLUMN dnauthorization.users_account.ACCOUNT_IS_DEPRECATED IS 'Признак того что аккаунт удален';
 
 -- Таблица dnauthorization.users_info
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_INFO
@@ -36,9 +38,9 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_INFO
     USER_NAME            TEXT    NOT NULL,
     USER_PATRONYMIC      TEXT    NOT NULL,
     USER_DATE_OF_BIRTH   DATE    NOT NULL,
-    USER_PERSONAL_NUMBER INTEGER NOT NULL,
+    USER_PERSONAL_NUMBER INTEGER NOT NULL UNIQUE,
     USER_STRUCTURE       INTEGER NOT NULL,
-    USER_CURRENT_POST    INTEGER NOT NULL,
+    USER_CURRENT_POST    UUID    NOT NULL,
     USER_PHONE           TEXT    NOT NULL,
     USER_OFFICE          TEXT    NOT NULL
 );
@@ -81,16 +83,3 @@ comment on column dnauthorization.active_session.session_server_public_key is '�
 comment on column dnauthorization.active_session.session_account_public_key is 'публичный ключ учетной записи, связанный с сеансом';
 comment on column dnauthorization.active_session.session_scrambler is 'значение для шифрования и смешивания данных сеанса';
 comment on column dnauthorization.active_session.session_authorization_key is 'ключ авторизации для доступа к ресурсам сеанса';
-
-
-
-INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
-VALUES ('TEST', 'TEST', 'TEST', 'TEST');
-INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
-VALUES ('TEST2', 'TEST2', 'TEST2', 'TEST');
-INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER, ACCOUNT_SALT)
-VALUES ('TEST3', 'TEST3', 'TEST3', 'TEST3');
-INSERT INTO DNAUTHORIZATION.USERS_ACCOUNT(ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_MAIL, ACCOUNT_PASSWORD_VERIFIER,
-                                          ACCOUNT_SALT)
-VALUES ('39f311a4-837e-4fff-b6bf-55cf2a7b04ad'::uuid, 'TEST4', 'TEST4', 'TEST4', 'TEST4');
-
