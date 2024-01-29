@@ -7,7 +7,7 @@ import jakarta.inject.Singleton;
 import ru.iedt.database.request.controller.DatabaseController;
 
 @ApplicationScoped
-public class SessionControl {
+public class SessionControlRepository  {
     @Inject
     DatabaseController databaseController;
 

@@ -10,16 +10,18 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
-import ru.iedt.authorization.api.users.dto.UserAccount;
+import ru.iedt.authorization.api.users.dto.UserAccountModel;
+import ru.iedt.authorization.api.users.dto.UserInfoModel;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @QuarkusTest
 public class UsersServiceTest {
-    @Inject
-    UserAccountModel userAccountModel;
 
     @Inject
-    UserInfoModel userInfoModel;
+    UserAccountRepository userAccountModel;
+
+    @Inject
+    UserInfoRepository userInfoModel;
 
     @Inject
     PgPool client;
@@ -27,8 +29,7 @@ public class UsersServiceTest {
     @BeforeAll
     void setup() throws IOException {
         StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(UsersServiceTest.class.getResourceAsStream("/init.sql"))))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(UsersServiceTest.class.getResourceAsStream("/init.sql"))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 resultStringBuilder.append(line).append("\n");
@@ -47,17 +48,10 @@ public class UsersServiceTest {
             String userMail = getRandomString(10);
             String passwordVerifier = getRandomString(25);
             String salt = getRandomString(5);
-            UserAccount userAccountInsert = userAccountModel
-                    .addUserAccount(username, userMail, passwordVerifier, salt, client)
-                    .await()
-                    .indefinitely();
+            UserAccountModel userAccountInsert = userAccountModel.addUserAccount(username, userMail, passwordVerifier, salt, client).await().indefinitely();
             Assertions.assertNotEquals(userAccountInsert, null, "Вставка вернула null значение");
-            UserAccount userAccountName =
-                    userAccountModel.getUserAccount(username, client).await().indefinitely();
-            UserAccount userAccountUUID = userAccountModel
-                    .getUserAccount(userAccountInsert.getAccountId(), client)
-                    .await()
-                    .indefinitely();
+            UserAccountModel userAccountName = userAccountModel.getUserAccount(username, client).await().indefinitely();
+            UserAccountModel userAccountUUID = userAccountModel.getUserAccount(userAccountInsert.getAccountId(), client).await().indefinitely();
             Assertions.assertEquals(userAccountInsert, userAccountName, "Вставка данных и дальнейший поиск не удался");
             Assertions.assertEquals(userAccountInsert, userAccountUUID, "Вставка данных и дальнейший поиск не удался");
             return null;
@@ -79,18 +73,10 @@ public class UsersServiceTest {
     void testUpdateUserAccount() {
         String accountName = getRandomString(10);
         String userMail = getRandomString(10);
-        UserAccount userAccountFirst = userAccountModel
-                .getAllUserAccount(this.client)
-                .collect()
-                .first()
-                .await()
-                .indefinitely();
+        UserAccountModel userAccountFirst = userAccountModel.getAllUserAccount(this.client).collect().first().await().indefinitely();
         userAccountFirst.setAccountName(accountName).setAccountMail(userMail);
         userAccountModel.updateUserAccount(userAccountFirst, client).await().indefinitely();
-        UserAccount userAccountUpdate = userAccountModel
-                .getUserAccount(userAccountFirst.getAccountId(), client)
-                .await()
-                .indefinitely();
+        UserAccountModel userAccountUpdate = userAccountModel.getUserAccount(userAccountFirst.getAccountId(), client).await().indefinitely();
         Assertions.assertEquals(userAccountUpdate, userAccountFirst, "Обновление данных не удалось");
         String mailUpdate = userAccountUpdate.getAccountMail();
         String mailFirst = userAccountFirst.getAccountMail();
@@ -106,37 +92,30 @@ public class UsersServiceTest {
     @Test
     void addUserInfo() {
         Random r = new Random();
-        List<UserAccount> usersAccount = userAccountModel
-                .getAllUserAccount(this.client)
-                .collect()
-                .asList()
-                .await()
-                .indefinitely();
-        for (UserAccount userAccount : usersAccount) {
-            String userSurname = getRandomString(5);
-            String userName = getRandomString(5);
-            String userPatronymic = getRandomString(5);
-            LocalDate userDateOfBirth = LocalDate.of(r.nextInt(1970, 2024), r.nextInt(1, 12), r.nextInt(1, 29));
-            int userPersonalNumber = r.nextInt(2111100000);
-            UUID userCurrentPost = UUID.randomUUID();
-            int userStructure = r.nextInt(15);
-            String userPhone = getRandomString(5);
-            String userOffice = getRandomString(5);
-            userInfoModel
-                    .addUserInfo(
-                            userAccount.getAccountId(),
-                            userSurname,
-                            userName,
-                            userPatronymic,
-                            userDateOfBirth,
-                            userPersonalNumber,
-                            userStructure,
-                            userCurrentPost,
-                            userPhone,
-                            userOffice,
-                            client)
-                    .await()
-                    .indefinitely();
+        ArrayList<UserInfoModel> arrayList = new ArrayList<>();
+        List<UserInfoModel> usersAccount = userAccountModel
+            .getAllUserAccount(this.client)
+            .onItem()
+            .transformToUni(userAccount -> {
+                String userSurname = getRandomString(5);
+                String userName = getRandomString(5);
+                String userPatronymic = getRandomString(5);
+                LocalDate userDateOfBirth = LocalDate.of(r.nextInt(1970, 2024), r.nextInt(1, 12), r.nextInt(1, 29));
+                int userPersonalNumber = r.nextInt(2111100000);
+                UUID userCurrentPost = UUID.randomUUID();
+                int userStructure = r.nextInt(15);
+                String userPhone = getRandomString(5);
+                String userOffice = getRandomString(5);
+                return userInfoModel.addUserInfo(userAccount.getAccountId(), userSurname, userName, userPatronymic, userDateOfBirth, userPersonalNumber, userStructure, userCurrentPost, userPhone, userOffice, client);
+            })
+            .merge()
+            .collect()
+            .asList()
+            .await()
+            .indefinitely();
+        for (UserInfoModel userAccount : usersAccount) {
+            UserInfoModel result = userInfoModel.getUserInfo(userAccount.getAccountId(), client).await().indefinitely();
+            Assertions.assertEquals(userAccount, result, "Вставка данных не удалась");
         }
     }
 

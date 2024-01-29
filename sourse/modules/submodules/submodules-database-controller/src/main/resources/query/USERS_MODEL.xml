@@ -89,6 +89,7 @@
                         ACCOUNT_SALT                    = $ACCOUNT_SALT$,
                         ACCOUNT_PASSWORD_RESET_INTERVAL = $ACCOUNT_PASSWORD_RESET_INTERVAL$
                     WHERE ACCOUNT_ID = $ACCOUNT_UUID$
+                    RETURNING *;
                 ]]>
             </SQL>
         </Query>
@@ -127,6 +128,38 @@
                 <![CDATA[
                     INSERT INTO $REF_SQL=SCHEMA_NAME$.USERS_INFO(ACCOUNT_ID, USER_SURNAME, USER_NAME, USER_PATRONYMIC, USER_DATE_OF_BIRTH, USER_PERSONAL_NUMBER, USER_STRUCTURE, USER_CURRENT_POST, USER_PHONE, USER_OFFICE)
                     VALUES ($ACCOUNT_UUID$, $USER_SURNAME$, $USER_NAME$, $USER_PATRONYMIC$, $USER_DATE_OF_BIRTH$, $USER_PERSONAL_NUMBER$, $USER_STRUCTURE$, $USER_CURRENT_POST$, $USER_PHONE$, $USER_OFFICE$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="UPDATE_USERS_INFO">
+        <Parameters>
+            <Parameter name="ACCOUNT_UUID" type="uuid"/>
+            <Parameter name="USER_SURNAME" type="string"/>
+            <Parameter name="USER_NAME" type="string"/>
+            <Parameter name="USER_PATRONYMIC" type="string"/>
+            <Parameter name="USER_DATE_OF_BIRTH" type="date"/>
+            <Parameter name="USER_PERSONAL_NUMBER" type="int"/>
+            <Parameter name="USER_STRUCTURE" type="int"/>
+            <Parameter name="USER_CURRENT_POST" type="uuid"/>
+            <Parameter name="USER_PHONE" type="string"/>
+            <Parameter name="USER_OFFICE" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    UPDATE $REF_SQL=SCHEMA_NAME$.USERS_INFO
+                    SET USER_SURNAME         = $USER_SURNAME$,
+                        USER_NAME            = $USER_NAME$,
+                        USER_PATRONYMIC      = $USER_PATRONYMIC$,
+                        USER_DATE_OF_BIRTH   = $USER_DATE_OF_BIRTH$,
+                        USER_PERSONAL_NUMBER = $USER_PERSONAL_NUMBER$,
+                        USER_STRUCTURE       = $USER_STRUCTURE$,
+                        USER_CURRENT_POST    = $USER_CURRENT_POST$,
+                        USER_PHONE           = $USER_PHONE$,
+                        USER_OFFICE          = $USER_OFFICE$
+                    WHERE ACCOUNT_ID = $ACCOUNT_UUID$
                     RETURNING *;
                 ]]>
             </SQL>
