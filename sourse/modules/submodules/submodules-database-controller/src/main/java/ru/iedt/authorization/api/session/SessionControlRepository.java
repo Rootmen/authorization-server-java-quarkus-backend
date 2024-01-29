@@ -6,13 +6,14 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import ru.iedt.database.request.controller.DatabaseController;
 
-@ApplicationScoped
+@Singleton
 public class SessionControlRepository  {
     @Inject
     DatabaseController databaseController;
 
     @Inject
     PgPool pgPool;
+
 
 
 

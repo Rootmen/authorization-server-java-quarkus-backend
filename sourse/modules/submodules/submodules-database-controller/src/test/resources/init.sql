@@ -1,12 +1,7 @@
 DROP SCHEMA IF EXISTS DNAUTHORIZATION CASCADE;
 -- СОЗДАНИЕ СХЕМЫ
 CREATE SCHEMA IF NOT EXISTS DNAUTHORIZATION;
-
 -- ТАБЛИЦА DNAUTHORIZATION.USERS_ACCOUNT
--- Создание схемы
-CREATE SCHEMA IF NOT EXISTS dnauthorization;
-
--- Таблица dnauthorization.users_account
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_ACCOUNT
 (
     ACCOUNT_ID                      UUID      DEFAULT GEN_RANDOM_UUID() PRIMARY KEY,
@@ -18,19 +13,17 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_ACCOUNT
     ACCOUNT_PASSWORD_RESET_INTERVAL INTEGER   DEFAULT 0                 NOT NULL,
     ACCOUNT_IS_DEPRECATED           BOOLEAN   DEFAULT FALSE             NOT NULL
 );
-
--- Добавление комментариев к таблице dnauthorization.users_account и её столбцам
-COMMENT ON TABLE dnauthorization.users_account IS 'Таблица для хранения информации о учетных записях';
-COMMENT ON COLUMN dnauthorization.users_account.account_id IS 'Уникальный идентификатор учетной записи';
-COMMENT ON COLUMN dnauthorization.users_account.account_name IS 'Имя учетной записи пользователя';
-COMMENT ON COLUMN dnauthorization.users_account.account_mail IS 'Электронная почта учетной записи пользователя';
-COMMENT ON COLUMN dnauthorization.users_account.account_password_verifier IS 'Верификатор пароля учетной записи';
-COMMENT ON COLUMN dnauthorization.users_account.account_salt IS 'Случайная строка, используемая для хеширования пароля';
-COMMENT ON COLUMN dnauthorization.users_account.account_last_password_update IS 'Дата и время последнего обновления пароля';
-COMMENT ON COLUMN dnauthorization.users_account.account_password_reset_interval IS 'Интервал сброса пароля в днях';
-COMMENT ON COLUMN dnauthorization.users_account.ACCOUNT_IS_DEPRECATED IS 'Признак того что аккаунт удален';
-
--- Таблица dnauthorization.users_info
+-- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.USERS_ACCOUNT И ЕЁ СТОЛБЦАМ
+COMMENT ON TABLE DNAUTHORIZATION.USERS_ACCOUNT IS 'Таблица для хранения информации о учетных записях';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_ID IS 'Уникальный идентификатор учетной записи';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_NAME IS 'Имя учетной записи пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_MAIL IS 'Электронная почта учетной записи пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_PASSWORD_VERIFIER IS 'Верификатор пароля учетной записи';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_SALT IS 'Случайная строка, используемая для хеширования пароля';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_LAST_PASSWORD_UPDATE IS 'Дата и время последнего обновления пароля';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_PASSWORD_RESET_INTERVAL IS 'Интервал сброса пароля в днях';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_ACCOUNT.ACCOUNT_IS_DEPRECATED IS 'Признак того что аккаунт удален';
+-- ТАБЛИЦА DNAUTHORIZATION.USERS_INFO
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_INFO
 (
     ACCOUNT_ID           UUID    NOT NULL UNIQUE REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID),
@@ -44,22 +37,20 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_INFO
     USER_PHONE           TEXT    NOT NULL,
     USER_OFFICE          TEXT    NOT NULL
 );
-
--- Добавление комментариев к таблице dnauthorization.users_info и её столбцам
-COMMENT ON TABLE dnauthorization.users_info IS 'Таблица для хранения дополнительной информации о пользователях';
-COMMENT ON COLUMN dnauthorization.users_info.account_id IS 'Идентификатор учетной записи пользователя (внешний ключ)';
-COMMENT ON COLUMN dnauthorization.users_info.user_surname IS 'Фамилия пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_name IS 'Имя пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_patronymic IS 'Отчество пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_date_of_birth IS 'Дата рождения пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_personal_number IS 'Персональный номер пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_structure IS 'Идентификатор структуры или подразделения, к которому относится пользователь';
-COMMENT ON COLUMN dnauthorization.users_info.user_current_post IS 'Идентификатор текущей должности пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_phone IS 'Номер телефона пользователя';
-COMMENT ON COLUMN dnauthorization.users_info.user_office IS 'Офис, в котором работает пользователь';
-
--- Таблица dnauthorization.active_session
-CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACTIVE_SESSION
+-- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.USERS_INFO И ЕЁ СТОЛБЦАМ
+COMMENT ON TABLE DNAUTHORIZATION.USERS_INFO IS 'Таблица для хранения дополнительной информации о пользователях';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.ACCOUNT_ID IS 'Идентификатор учетной записи пользователя (внешний ключ)';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_SURNAME IS 'Фамилия пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_NAME IS 'Имя пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_PATRONYMIC IS 'Отчество пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_DATE_OF_BIRTH IS 'Дата рождения пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_PERSONAL_NUMBER IS 'Персональный номер пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_STRUCTURE IS 'Идентификатор структуры или подразделения, к которому относится пользователь';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_CURRENT_POST IS 'Идентификатор текущей должности пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_PHONE IS 'Номер телефона пользователя';
+COMMENT ON COLUMN DNAUTHORIZATION.USERS_INFO.USER_OFFICE IS 'Офис, в котором работает пользователь';
+-- ТАБЛИЦА DNAUTHORIZATION.ACTIVE_SESSIONS
+CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACTIVE_SESSIONS
 (
     SESSION_ID                 TEXT      NOT NULL UNIQUE,
     SESSION_KEY                TEXT      NOT NULL,
@@ -71,15 +62,16 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACTIVE_SESSION
     SESSION_SCRAMBLER          TEXT,
     SESSION_AUTHORIZATION_KEY  TEXT
 );
+-- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.ACTIVE_SESSIONS И ЕЁ СТОЛБЦАМ
+COMMENT ON TABLE DNAUTHORIZATION.ACTIVE_SESSIONS IS 'таблица для отслеживания активных сеансов пользователей';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ID IS 'уникальный идентификатор сеанса';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_KEY IS 'ключ сеанса для аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_START IS 'дата и время начала сеанса';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ACCOUNT_ID IS 'идентификатор учетной записи, связанной с сеансом (внешний ключ)';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_SERVER_PRIVATE_KEY IS 'закрытый ключ сервера, связанный с сеансом';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_SERVER_PUBLIC_KEY IS 'публичный ключ сервера, связанный с сеансом';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ACCOUNT_PUBLIC_KEY IS 'публичный ключ учетной записи, связанный с сеансом';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_SCRAMBLER IS 'значение для шифрования и смешивания данных сеанса';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_AUTHORIZATION_KEY IS 'ключ авторизации для доступа к ресурсам сеанса';
 
--- Добавление комментариев к таблице dnauthorization.active_session и её столбцам
-comment on table dnauthorization.active_session is 'таблица для отслеживания активных сеансов пользователей';
-comment on column dnauthorization.active_session.session_id is 'уникальный идентификатор сеанса';
-comment on column dnauthorization.active_session.session_key is 'ключ сеанса для аутентификации';
-comment on column dnauthorization.active_session.session_start is 'дата и время начала сеанса';
-comment on column dnauthorization.active_session.session_account_id is 'идентификатор учетной записи, связанной с сеансом (внешний ключ)';
-comment on column dnauthorization.active_session.session_server_private_key is 'закрытый ключ сервера, связанный с сеансом';
-comment on column dnauthorization.active_session.session_server_public_key is 'публичный ключ сервера, связанный с сеансом';
-comment on column dnauthorization.active_session.session_account_public_key is 'публичный ключ учетной записи, связанный с сеансом';
-comment on column dnauthorization.active_session.session_scrambler is 'значение для шифрования и смешивания данных сеанса';
-comment on column dnauthorization.active_session.session_authorization_key is 'ключ авторизации для доступа к ресурсам сеанса';
+select * from DNAUTHORIZATION.USERS_INFO;
