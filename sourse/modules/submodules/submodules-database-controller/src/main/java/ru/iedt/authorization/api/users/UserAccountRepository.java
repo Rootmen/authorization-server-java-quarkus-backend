@@ -7,6 +7,7 @@ import io.vertx.mutiny.sqlclient.RowSet;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class UserAccountRepository {
 
     public Multi<UserAccountModel> getAllUserAccount(PgPool client) {
         return databaseController
-                .runningQuerySet("users_model", "GET_USER_ACCOUNT", new HashMap<>(), client)
+                .runningQuerySet("USERS_MODEL", "GET_USER_ACCOUNT", new HashMap<>(), client)
                 .onItem()
                 .transform(element -> element.get(0).get("main"))
                 .onItem()
@@ -35,7 +36,7 @@ public class UserAccountRepository {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("ACCOUNT_NAME", new ParameterInput("ACCOUNT_NAME", accountName));
         return databaseController
-                .runningQuerySet("users_model", "GET_USER_ACCOUNT", parameters, client)
+                .runningQuerySet("USERS_MODEL", "GET_USER_ACCOUNT", parameters, client)
                 .onItem()
                 .transform(element -> element.get(0).get("main"))
                 .onItem()
@@ -48,7 +49,7 @@ public class UserAccountRepository {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_UUID", userId.toString()));
         return databaseController
-                .runningQuerySet("users_model", "GET_USER_ACCOUNT", parameters, client)
+                .runningQuerySet("USERS_MODEL", "GET_USER_ACCOUNT", parameters, client)
                 .onItem()
                 .transform(element -> element.get(0).get("main"))
                 .onItem()
@@ -64,7 +65,7 @@ public class UserAccountRepository {
         parameters.put("ACCOUNT_PASSWORD_VERIFIER", new ParameterInput("ACCOUNT_PASSWORD_VERIFIER", passwordVerifier));
         parameters.put("ACCOUNT_SALT", new ParameterInput("ACCOUNT_SALT", salt));
         return databaseController
-                .runningQuerySet("users_model", "ADD_USER_ACCOUNT", parameters, client)
+                .runningQuerySet("USERS_MODEL", "ADD_USER_ACCOUNT", parameters, client)
                 .onItem()
                 .transform(element -> element.get(0).get("main"))
                 .onItem()
@@ -82,7 +83,7 @@ public class UserAccountRepository {
         parameters.put("ACCOUNT_SALT", new ParameterInput("ACCOUNT_SALT", userAccount.getAccountSalt()));
         parameters.put("ACCOUNT_PASSWORD_RESET_INTERVAL", new ParameterInput("ACCOUNT_PASSWORD_RESET_INTERVAL", Integer.toString(userAccount.getAccountPasswordResetInterval())));
         return databaseController
-                .runningQuerySet("users_model", "UPDATE_USER_ACCOUNT", parameters, client)
+                .runningQuerySet("USERS_MODEL", "UPDATE_USER_ACCOUNT", parameters, client)
                 .onItem()
                 .transform(element -> element.get(0).get("main"))
                 .onItem()

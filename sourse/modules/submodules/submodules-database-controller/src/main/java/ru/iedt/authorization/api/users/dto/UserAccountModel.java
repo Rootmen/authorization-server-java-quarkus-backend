@@ -2,6 +2,7 @@ package ru.iedt.authorization.api.users.dto;
 
 import io.vertx.mutiny.sqlclient.Row;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -94,28 +95,30 @@ public class UserAccountModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         UserAccountModel that = (UserAccountModel) o;
 
-        if (this.account_password_reset_interval != that.account_password_reset_interval) return false;
-        if (!this.account_id.equals(that.account_id)) return false;
-        if (!this.account_mail.equals(that.account_mail)) return false;
-        if (!this.account_name.equals(that.account_name)) return false;
-        if (!this.account_password_verifier.equals(that.account_password_verifier)) return false;
-        if (!this.account_salt.equals(that.account_salt)) return false;
-        return this.account_last_password_update.equals(that.account_last_password_update);
+        if (account_password_reset_interval != that.account_password_reset_interval) return false;
+        if (is_deprecated != that.is_deprecated) return false;
+        if (!Objects.equals(account_id, that.account_id)) return false;
+        if (!Objects.equals(account_mail, that.account_mail)) return false;
+        if (!Objects.equals(account_name, that.account_name)) return false;
+        if (!Objects.equals(account_password_verifier, that.account_password_verifier)) return false;
+        if (!Objects.equals(account_salt, that.account_salt)) return false;
+        return Objects.equals(account_last_password_update, that.account_last_password_update);
     }
 
     @Override
     public int hashCode() {
-        int result = this.account_id.hashCode();
-        result = 31 * result + this.account_mail.hashCode();
-        result = 31 * result + this.account_name.hashCode();
-        result = 31 * result + this.account_password_verifier.hashCode();
-        result = 31 * result + this.account_salt.hashCode();
-        result = 31 * result + this.account_last_password_update.hashCode();
-        result = 31 * result + this.account_password_reset_interval;
+        int result = account_id != null ? account_id.hashCode() : 0;
+        result = 31 * result + (account_mail != null ? account_mail.hashCode() : 0);
+        result = 31 * result + (account_name != null ? account_name.hashCode() : 0);
+        result = 31 * result + (account_password_verifier != null ? account_password_verifier.hashCode() : 0);
+        result = 31 * result + (account_salt != null ? account_salt.hashCode() : 0);
+        result = 31 * result + (account_last_password_update != null ? account_last_password_update.hashCode() : 0);
+        result = 31 * result + account_password_reset_interval;
+        result = 31 * result + (is_deprecated ? 1 : 0);
         return result;
     }
 

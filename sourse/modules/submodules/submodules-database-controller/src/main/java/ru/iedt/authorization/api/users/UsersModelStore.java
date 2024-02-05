@@ -19,6 +19,6 @@ public class UsersModelStore extends QueryStoreDefinition {
 
     @Override
     public String getStoreName() {
-        return "users_model";
+        return "USERS_MODEL";
     }
 }

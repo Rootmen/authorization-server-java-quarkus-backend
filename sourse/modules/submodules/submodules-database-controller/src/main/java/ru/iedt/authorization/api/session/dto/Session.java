@@ -4,6 +4,7 @@ import io.vertx.mutiny.sqlclient.Row;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -81,5 +82,43 @@ public class Session {
                 new BigInteger(row.getString("session_scrambler"), 16),
                 new BigInteger(row.getString("session_authorization_key"), 16)
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Session session = (Session) o;
+
+        if (!Objects.equals(session_id, session.session_id)) return false;
+        if (!Objects.equals(session_key, session.session_key)) return false;
+        if (!Objects.equals(session_start, session.session_start))
+            return false;
+        if (!Objects.equals(session_account_id, session.session_account_id))
+            return false;
+        if (!Objects.equals(session_server_private_key, session.session_server_private_key))
+            return false;
+        if (!Objects.equals(session_server_public_key, session.session_server_public_key))
+            return false;
+        if (!Objects.equals(session_account_public_key, session.session_account_public_key))
+            return false;
+        if (!Objects.equals(session_scrambler, session.session_scrambler))
+            return false;
+        return Objects.equals(session_authorization_key, session.session_authorization_key);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = session_id != null ? session_id.hashCode() : 0;
+        result = 31 * result + (session_key != null ? session_key.hashCode() : 0);
+        result = 31 * result + (session_start != null ? session_start.hashCode() : 0);
+        result = 31 * result + (session_account_id != null ? session_account_id.hashCode() : 0);
+        result = 31 * result + (session_server_private_key != null ? session_server_private_key.hashCode() : 0);
+        result = 31 * result + (session_server_public_key != null ? session_server_public_key.hashCode() : 0);
+        result = 31 * result + (session_account_public_key != null ? session_account_public_key.hashCode() : 0);
+        result = 31 * result + (session_scrambler != null ? session_scrambler.hashCode() : 0);
+        result = 31 * result + (session_authorization_key != null ? session_authorization_key.hashCode() : 0);
+        return result;
     }
 }

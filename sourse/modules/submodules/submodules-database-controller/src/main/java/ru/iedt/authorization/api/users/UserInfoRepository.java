@@ -45,7 +45,7 @@ public class UserInfoRepository {
         parameters.put("USER_PHONE", new ParameterInput("USER_PHONE", userPhone));
         parameters.put("USER_OFFICE", new ParameterInput("USER_OFFICE", userOffice));
         return databaseController
-            .runningQuerySet("users_model", "ADD_USERS_INFO", parameters, client)
+            .runningQuerySet("USERS_MODEL", "ADD_USERS_INFO", parameters, client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()
@@ -58,7 +58,7 @@ public class UserInfoRepository {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_UUID", userId.toString()));
         return databaseController
-            .runningQuerySet("users_model", "GET_USER_INFO", parameters, client)
+            .runningQuerySet("USERS_MODEL", "GET_USER_INFO", parameters, client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()
@@ -69,7 +69,7 @@ public class UserInfoRepository {
 
     public Multi<UserInfoModel> getAllUserInfo(PgPool client) {
         return databaseController
-            .runningQuerySet("users_model", "GET_USER_ACCOUNT", new HashMap<>(), client)
+            .runningQuerySet("USERS_MODEL", "GET_USER_ACCOUNT", new HashMap<>(), client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()

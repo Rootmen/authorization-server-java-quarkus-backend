@@ -1,7 +1,9 @@
 package ru.iedt.authorization.api.users.dto;
 
 import io.vertx.mutiny.sqlclient.Row;
+
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -73,33 +75,33 @@ public class UserInfoModel {
 
     public static UserInfoModel from(Row row) {
         return new UserInfoModel(
-            row.getUUID("account_id"),
-            row.getString("user_surname"),
-            row.getString("user_name"),
-            row.getString("user_patronymic"),
-            row.getLocalDate("user_date_of_birth"),
-            row.getInteger("user_personal_number"),
-            row.getInteger("user_structure"),
-            row.getUUID("user_current_post"),
-            row.getString("user_phone"),
-            row.getString("user_office")
+                row.getUUID("account_id"),
+                row.getString("user_surname"),
+                row.getString("user_name"),
+                row.getString("user_patronymic"),
+                row.getLocalDate("user_date_of_birth"),
+                row.getInteger("user_personal_number"),
+                row.getInteger("user_structure"),
+                row.getUUID("user_current_post"),
+                row.getString("user_phone"),
+                row.getString("user_office")
         );
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", UserInfoModel.class.getSimpleName() + "[", "]")
-            .add("account_id=" + account_id)
-            .add("user_surname='" + user_surname + "'")
-            .add("user_name='" + user_name + "'")
-            .add("user_patronymic='" + user_patronymic + "'")
-            .add("user_date_of_birth=" + user_date_of_birth)
-            .add("user_personal_number=" + user_personal_number)
-            .add("user_structure=" + user_structure)
-            .add("user_current_post=" + user_current_post)
-            .add("user_phone='" + user_phone + "'")
-            .add("user_office='" + user_office + "'")
-            .toString();
+                .add("account_id=" + account_id)
+                .add("user_surname='" + user_surname + "'")
+                .add("user_name='" + user_name + "'")
+                .add("user_patronymic='" + user_patronymic + "'")
+                .add("user_date_of_birth=" + user_date_of_birth)
+                .add("user_personal_number=" + user_personal_number)
+                .add("user_structure=" + user_structure)
+                .add("user_current_post=" + user_current_post)
+                .add("user_phone='" + user_phone + "'")
+                .add("user_office='" + user_office + "'")
+                .toString();
     }
 
     public void setUserSurname(String user_surname) {
@@ -141,34 +143,34 @@ public class UserInfoModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        UserInfoModel userInfo = (UserInfoModel) o;
+        UserInfoModel that = (UserInfoModel) o;
 
-        if (this.user_personal_number != userInfo.user_personal_number) return false;
-        if (this.user_structure != userInfo.user_structure) return false;
-        if (!this.account_id.equals(userInfo.account_id)) return false;
-        if (!this.user_surname.equals(userInfo.user_surname)) return false;
-        if (!this.user_name.equals(userInfo.user_name)) return false;
-        if (!this.user_patronymic.equals(userInfo.user_patronymic)) return false;
-        if (!this.user_date_of_birth.equals(userInfo.user_date_of_birth)) return false;
-        if (!this.user_current_post.equals(userInfo.user_current_post)) return false;
-        if (!this.user_phone.equals(userInfo.user_phone)) return false;
-        return this.user_office.equals(userInfo.user_office);
+        if (user_personal_number != that.user_personal_number) return false;
+        if (user_structure != that.user_structure) return false;
+        if (!Objects.equals(account_id, that.account_id)) return false;
+        if (!Objects.equals(user_surname, that.user_surname)) return false;
+        if (!Objects.equals(user_name, that.user_name)) return false;
+        if (!Objects.equals(user_patronymic, that.user_patronymic)) return false;
+        if (!Objects.equals(user_date_of_birth, that.user_date_of_birth)) return false;
+        if (!Objects.equals(user_current_post, that.user_current_post))  return false;
+        if (!Objects.equals(user_phone, that.user_phone)) return false;
+        return Objects.equals(user_office, that.user_office);
     }
 
     @Override
     public int hashCode() {
-        int result = this.account_id.hashCode();
-        result = 31 * result + this.user_surname.hashCode();
-        result = 31 * result + this.user_name.hashCode();
-        result = 31 * result + this.user_patronymic.hashCode();
-        result = 31 * result + this.user_date_of_birth.hashCode();
-        result = 31 * result + this.user_personal_number;
-        result = 31 * result + this.user_structure;
-        result = 31 * result + this.user_current_post.hashCode();
-        result = 31 * result + this.user_phone.hashCode();
-        result = 31 * result + this.user_office.hashCode();
+        int result = account_id != null ? account_id.hashCode() : 0;
+        result = 31 * result + (user_surname != null ? user_surname.hashCode() : 0);
+        result = 31 * result + (user_name != null ? user_name.hashCode() : 0);
+        result = 31 * result + (user_patronymic != null ? user_patronymic.hashCode() : 0);
+        result = 31 * result + (user_date_of_birth != null ? user_date_of_birth.hashCode() : 0);
+        result = 31 * result + user_personal_number;
+        result = 31 * result + user_structure;
+        result = 31 * result + (user_current_post != null ? user_current_post.hashCode() : 0);
+        result = 31 * result + (user_phone != null ? user_phone.hashCode() : 0);
+        result = 31 * result + (user_office != null ? user_office.hashCode() : 0);
         return result;
     }
 }
