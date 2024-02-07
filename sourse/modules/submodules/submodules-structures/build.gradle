@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation project(path: ':sourse:modules:exception')
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
 }
 
 group "${applicationGroup}"
@@ -30,7 +30,6 @@ java {
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
-
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'

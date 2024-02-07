@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Definition parser="v3">
+    <Templates>
+        <Template ID="SCHEMA_NAME">
+            <![CDATA[DNAUTHORIZATION]]>
+        </Template>
+        <Template ID="SELECT_ACTIVE_SESSION">
+            <![CDATA[SELECT SESSION_ID,
+                            SESSION_KEY,
+                            SESSION_START,
+                            SESSION_ACCOUNT_ID,
+                            SESSION_SERVER_PRIVATE_KEY,
+                            SESSION_SERVER_PUBLIC_KEY,
+                            SESSION_ACCOUNT_PUBLIC_KEY,
+                            SESSION_SCRAMBLER,
+                            SESSION_AUTHORIZATION_KEY,
+                            SESSION_SIGNATURE,
+                            GET_ACTIVE_SESSION
+                     FROM DNAUTHORIZATION.ACTIVE_SESSION]]>
+        </Template>
+    </Templates>
+    <QuerySet ID="GET_ACTIVE_SESSION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND SESSION_ID = $SESSION_ID$]]></Otherwise>
+            </Parameter>
+            <Parameter name="SESSION_ACCOUNT_ID" type="uuid">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND SESSION_ACCOUNT_ID = $SESSION_ACCOUNT_ID$]]></Otherwise>
+            </Parameter>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    $REF_SQL=SELECT_ACTIVE_SESSION$
+                    WHERE TRUE $SESSION_ID$ $SESSION_ACCOUNT_ID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_ACTIVE_SESSION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string"/>
+            <Parameter name="SESSION_KEY" type="string"/>
+            <Parameter name="SESSION_ACCOUNT_ID" type="uuid"/>
+            <Parameter name="SESSION_SERVER_PRIVATE_KEY" type="string"/>
+            <Parameter name="SESSION_SERVER_PUBLIC_KEY" type="string"/>
+            <Parameter name="SESSION_ACCOUNT_PUBLIC_KEY" type="string"/>
+            <Parameter name="SESSION_SCRAMBLER" type="string"/>
+            <Parameter name="SESSION_AUTHORIZATION_KEY" type="string"/>
+            <Parameter name="SESSION_SIGNATURE" type="string"/>
+            <Parameter name="SESSION_IP_ADDRESS" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO DNAUTHORIZATION.ACTIVE_SESSIONS(SESSION_ID,
+                                                                SESSION_KEY,
+                                                                SESSION_ACCOUNT_ID,
+                                                                SESSION_SERVER_PRIVATE_KEY,
+                                                                SESSION_SERVER_PUBLIC_KEY,
+                                                                SESSION_ACCOUNT_PUBLIC_KEY,
+                                                                SESSION_SCRAMBLER,
+                                                                SESSION_AUTHORIZATION_KEY,
+                                                                SESSION_IP_ADDRESS,
+                                                                SESSION_SIGNATURE)
+                    VALUES ($SESSION_ID$,
+                            $SESSION_KEY$,
+                            $SESSION_ACCOUNT_ID$,
+                            $SESSION_SERVER_PRIVATE_KEY$,
+                            $SESSION_SERVER_PUBLIC_KEY$,
+                            $SESSION_ACCOUNT_PUBLIC_KEY$,
+                            $SESSION_SCRAMBLER$,
+                            $SESSION_AUTHORIZATION_KEY$,
+                            $SESSION_IP_ADDRESS$,
+                            $SESSION_SIGNATURE$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+</Definition>

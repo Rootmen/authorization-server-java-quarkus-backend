@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id 'org.kordamp.gradle.jandex' version '1.1.0'
 }
 
 repositories {
@@ -10,7 +11,14 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'ru.iedt.database.request:structures:1.0.13'
+    implementation 'ru.iedt.database.request:store:1.0.13'
+    implementation 'ru.iedt.database.request:database-controller:1.0.13'
     implementation project(path: ':sourse:modules:exception')
+    implementation project(path: ':sourse:modules:submodules:submodules-structures')
+    testImplementation 'io.quarkus:quarkus-junit5'
 }
 
 group "${applicationGroup}"
@@ -27,10 +35,21 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+tasks.named('compileTestJava') {
+    dependsOn 'jandex'
+}
+
+tasks.named('test') {
+    dependsOn 'jandex'
+}
+
+tasks.named('quarkusDependenciesBuild') {
+    dependsOn 'jandex'
+}
+
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
-
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'
