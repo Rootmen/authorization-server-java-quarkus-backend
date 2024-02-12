@@ -18,6 +18,10 @@
                             GET_ACTIVE_SESSION
                      FROM DNAUTHORIZATION.ACTIVE_SESSION]]>
         </Template>
+        <Template ID="SELECT_UPDATE_TOKENS">
+            <![CDATA[SELECT SESSION_ACCOUNT_ID, SESSION_UPDATE_TOKEN, SESSION_UPDATE_TOKEN_START
+                    FROM DNAUTHORIZATION.UPDATE_TOKENS;]]>
+        </Template>
     </Templates>
     <QuerySet ID="GET_ACTIVE_SESSION">
         <Parameters>
@@ -80,4 +84,36 @@
             </SQL>
         </Query>
     </QuerySet>
+    <QuerySet ID="GET_UPDATE_TOKEN">
+        <Parameters>
+            <Parameter name="SESSION_UPDATE_TOKEN" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[WHERE SESSION_UPDATE_TOKEN = $SESSION_UPDATE_TOKEN$]]></Otherwise>
+            </Parameter>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    $REF_SQL=SELECT_UPDATE_TOKENS$
+                    $SESSION_UPDATE_TOKEN$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_UPDATE_TOKEN">
+        <Parameters>
+            <Parameter name="SESSION_UPDATE_TOKEN" type="string"/>
+            <Parameter name="SESSION_ACCOUNT_ID" type="uuid"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO  DNAUTHORIZATION.UPDATE_TOKENS(SESSION_ACCOUNT_ID, SESSION_UPDATE_TOKEN)
+                    VALUES ($SESSION_ACCOUNT_ID$, $SESSION_UPDATE_TOKEN_START$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+
 </Definition>
