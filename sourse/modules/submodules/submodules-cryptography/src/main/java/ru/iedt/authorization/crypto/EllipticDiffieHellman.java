@@ -245,7 +245,7 @@ public class EllipticDiffieHellman {
          * Возвращает эллиптическую кривую
          */
         public String toString() {
-            return this.toString(10);
+            return this.toString(16);
         }
 
         /**

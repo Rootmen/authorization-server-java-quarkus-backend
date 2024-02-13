@@ -13,6 +13,7 @@ import java.util.concurrent.*;
 
 import org.junit.jupiter.api.*;
 import ru.iedt.authorization.api.session.SessionControlRepository;
+import ru.iedt.authorization.crypto.SRP;
 import ru.iedt.authorization.models.user.UserAccountModel;
 import ru.iedt.authorization.models.user.UserInfoModel;
 
@@ -74,6 +75,14 @@ public class UsersServiceTest {
         }
     }
 
+    @Order(1)
+    @Test
+    void testAddUserRootmen() throws ExecutionException, InterruptedException {
+        String username = "rootmen";
+        String user_password = "rootmen";
+        String salt = getRandomString(6);
+        userAccountModel.addUserAccount(username, "10poma10@mail.ru", SRP.getVerifier(user_password, salt).toString(16), salt, client).await().indefinitely();
+    }
     @Order(2)
     @RepeatedTest(150)
     void testUpdateUserAccount() {
@@ -166,7 +175,7 @@ public class UsersServiceTest {
                 ).merge().collect().asList().await().indefinitely();
     }
 
-    static String AlphaNumericStr = "0123456789ABCDEF";
+    static String AlphaNumericStr = "0123456789abcdef";
 
     public static String getRandomString(int size) {
         StringBuilder result = new StringBuilder(size);

@@ -46,7 +46,7 @@ public class SessionControlService {
                 BigInteger scrambler = new BigInteger(SRP.H(serverPublicKey.toString(16) + accountPublicKey), 16);
                 String authorizationKey = SRP.getKeyServer(serverPublicKey, new BigInteger(accountPublicKey, 16), new BigInteger(user.getAccountPasswordVerifier(), 16), serverPrivateKey);
                 return sessionControlRepository
-                    .addSession(sessionId, key, accountId, serverPrivateKey.toString(), serverPublicKey.toString(), accountPublicKey, scrambler.toString(), authorizationKey, signature, ip, this.client)
+                    .addSession(sessionId, key, accountId, serverPrivateKey.toString(16), serverPublicKey.toString(16), accountPublicKey, scrambler.toString(16), authorizationKey, signature, ip, this.client)
                     .onItem()
                     .transform(sessionModel -> new SessionAuthorizationInfoModel(sessionId, accountId, serverPublicKey.toString(16), user.getAccountSalt(), diffieHellman.getPublicKeyX(), diffieHellman.getPublicKeyY()));
             });
@@ -65,9 +65,9 @@ public class SessionControlService {
                             new BigInteger(SRP.H(SRP.n.toString(16)), 16).xor(new BigInteger(SRP.H(SRP.g.toString(16)), 16)).toString(16) +
                             SRP.H(userAccountModel.getAccountName()) +
                             userAccountModel.getAccountSalt() +
-                            sessionModel.getSessionAccountPublicKey() +
-                            sessionModel.getSessionServerPublicKey() +
-                            sessionModel.getSessionAuthorizationKey()
+                            sessionModel.getSessionAccountPublicKey().toString(16) +
+                            sessionModel.getSessionServerPublicKey().toString(16) +
+                            sessionModel.getSessionAuthorizationKey().toString(16)
                         );
                         if (!Equals.equals(serverConfirm, confirm)) {
                             throw new RuntimeException(new SessionControlServiceException("Confirm is not true", "Invalid confirm"));

@@ -36,7 +36,7 @@ public class SessionController extends BaseRestController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Создание сессии", description = "Генерация информации о сессии и получение данных")
-    public Uni<SessionAuthorizationInfoModel> createSession(InitSession session, @RestHeader("account_id") UUID accountId) {
+    public Uni<SessionAuthorizationInfoModel> createSession(InitSession session, @RestHeader("X-Account-id") UUID accountId) {
         String ip = context.request().remoteAddress().hostAddress();
         return this.sessionControlService.createSession(session.x_cord, session.y_cord, session.account_public_key, accountId, this.fingerprint + ip, ip);
     }

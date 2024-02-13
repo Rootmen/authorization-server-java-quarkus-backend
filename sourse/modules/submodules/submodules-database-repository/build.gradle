@@ -19,6 +19,7 @@ dependencies {
     implementation project(path: ':sourse:modules:exception')
     implementation project(path: ':sourse:modules:submodules:submodules-structures')
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation project(path: ':sourse:modules:submodules:submodules-cryptography')
 
 }
 

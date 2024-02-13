@@ -14,9 +14,8 @@
                             SESSION_ACCOUNT_PUBLIC_KEY,
                             SESSION_SCRAMBLER,
                             SESSION_AUTHORIZATION_KEY,
-                            SESSION_SIGNATURE,
-                            GET_ACTIVE_SESSION
-                     FROM DNAUTHORIZATION.ACTIVE_SESSION]]>
+                            SESSION_SIGNATURE
+                     FROM DNAUTHORIZATION.ACTIVE_SESSIONS]]>
         </Template>
         <Template ID="SELECT_UPDATE_TOKENS">
             <![CDATA[SELECT SESSION_ACCOUNT_ID, SESSION_UPDATE_TOKEN, SESSION_UPDATE_TOKEN_START
