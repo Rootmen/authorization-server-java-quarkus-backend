@@ -20,6 +20,12 @@ You can run your application in dev mode that enables live coding using:
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
+## Запуск отдельного модуля
+
+```shell script
+./gradlew  sourse:modules:module-rest-endpoint:tasks quarkusDev --console=plain -Ptarget=module-rest-endpoint-service -Ddebug=5005
+```
+
 ## Packaging and running the application
 
 The application can be packaged using:
@@ -27,6 +33,7 @@ The application can be packaged using:
 ```shell script
 ./gradlew build
 ```
+
 
 It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
 Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.

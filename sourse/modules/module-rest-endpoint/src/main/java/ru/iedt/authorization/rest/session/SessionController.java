@@ -26,9 +26,9 @@ public class SessionController extends BaseRestController {
 
     @Schema(name = "InitSession", description = "Данные для создания сессии")
     public record InitSession(
-        @NotBlank @Schema(title = "x координата для эллиптической кривой", required = true, pattern = "[1-9a-f][0-9a-f]+") String x_cord,
-        @NotBlank @Schema(title = "у координата для эллиптической кривой", required = true, pattern = "[1-9a-f][0-9a-f]+") String y_cord,
-        @NotBlank @Schema(title = "Публичный ключ для протокола SRP-6A", required = true, pattern = "[1-9a-f][0-9a-f]+") String account_public_key
+        @NotBlank(message = "x_cord is empty") @Schema(title = "x координата для эллиптической кривой", required = true, pattern = "[1-9a-f][0-9a-f]+") String x_cord,
+        @NotBlank(message = "y_cord is empty") @Schema(title = "у координата для эллиптической кривой", required = true, pattern = "[1-9a-f][0-9a-f]+") String y_cord,
+        @NotBlank(message = "account_public_key is empty") @Schema(title = "Публичный ключ для протокола SRP-6A", required = true, pattern = "[1-9a-f][0-9a-f]+") String account_public_key
     ) {}
 
     @POST
@@ -38,13 +38,13 @@ public class SessionController extends BaseRestController {
     @Operation(summary = "Создание сессии", description = "Генерация информации о сессии и получение данных")
     public Uni<SessionAuthorizationInfoModel> createSession(InitSession session, @RestHeader("X-Account-id") UUID accountId) {
         String ip = context.request().remoteAddress().hostAddress();
-        return this.sessionControlService.createSession(session.x_cord, session.y_cord, session.account_public_key, accountId, this.fingerprint + ip, ip);
+        return this.sessionControlService.createSession(session.x_cord, session.y_cord, session.account_public_key, accountId, this.fingerprint, ip);
     }
 
     @Schema(name = "ConfirmSession", description = "Данные для подтверждения сессии")
     public record ConfirmSession(
-        @NotBlank @Schema(title = "id сессии", required = true, pattern = "[1-9a-f][0-9a-f]+") String session_id,
-        @NotBlank @Schema(title = "Подтверждение сессии от клиента", required = true, pattern = "[1-9a-f][0-9a-f]+") String confirm
+        @NotBlank(message = "session_id is empty") @Schema(title = "id сессии", required = true, pattern = "[1-9a-f][0-9a-f]+") String session_id,
+        @NotBlank(message = "confirm is empty") @Schema(title = "Подтверждение сессии от клиента", required = true, pattern = "[1-9a-f][0-9a-f]+") String confirm
     ) {}
 
     @POST
@@ -54,11 +54,11 @@ public class SessionController extends BaseRestController {
     @Operation(summary = "Подтверждение сессии", description = "Подтверждение сессии ")
     public Uni<SessionAuthorizationConfirmModel> confirmSession(ConfirmSession session) {
         String ip = context.request().remoteAddress().hostAddress();
-        return this.sessionControlService.confirmSession(session.session_id, session.confirm, this.fingerprint + ip);
+        return this.sessionControlService.confirmSession(session.session_id, session.confirm, this.fingerprint, ip);
     }
 
     @Schema(name = "UserUUID", description = "Данные о соответствии UUID пользователя и имени")
-    public record UserUUID(UUID uuid, String username) {}
+    public record UserUUID(@NotBlank(message = "session_id is empty") @Schema(title = "UUID пользователя", required = true) UUID uuid, @NotBlank(message = "session_id is empty") @Schema(title = "Имя пользователя", required = true) String username) {}
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -76,6 +76,6 @@ public class SessionController extends BaseRestController {
     @Operation(summary = "Обновление токена сессии", description = "Обновление сессии через токен")
     public Uni<SessionAuthorizationConfirmModel> updateSession(ConfirmSession session) {
         String ip = context.request().remoteAddress().hostAddress();
-        return this.sessionControlService.confirmSession(session.session_id, session.confirm, this.fingerprint + ip);
+        return this.sessionControlService.confirmSession(session.session_id, session.confirm, this.fingerprint, ip);
     }
 }

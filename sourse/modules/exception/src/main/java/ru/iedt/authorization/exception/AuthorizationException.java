@@ -2,7 +2,8 @@ package ru.iedt.authorization.exception;
 
 import org.jboss.logging.Logger;
 
-public class AuthorizationException extends Exception {
+public class AuthorizationException extends RuntimeException {
+
     private static final Logger log = Logger.getLogger(AuthorizationException.class);
     String error;
     String message;
@@ -20,5 +21,18 @@ public class AuthorizationException extends Exception {
         this.error = error;
         this.message = message;
         log.error(message);
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    public Exception getBase() {
+        return base;
     }
 }

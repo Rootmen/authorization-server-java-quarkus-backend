@@ -7,16 +7,17 @@ import io.vertx.mutiny.pgclient.PgPool;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.UUID;
 import ru.iedt.authorization.api.session.SessionControlRepository;
 import ru.iedt.authorization.api.users.UserAccountRepository;
 import ru.iedt.authorization.crypto.EllipticDiffieHellman;
 import ru.iedt.authorization.crypto.Equals;
 import ru.iedt.authorization.crypto.SRP;
+import ru.iedt.authorization.exception.AuthorizationException;
 import ru.iedt.authorization.exception.SessionControlServiceException;
 import ru.iedt.authorization.models.session.output.SessionAuthorizationConfirmModel;
 import ru.iedt.authorization.models.session.output.SessionAuthorizationInfoModel;
-import ru.iedt.authorization.models.user.UserAccountModel;
 
 @Singleton
 public class SessionControlService {
@@ -36,7 +37,7 @@ public class SessionControlService {
             .onItem()
             .transformToUni(user -> {
                 if (user.isDeprecated()) {
-                    throw new RuntimeException(new SessionControlServiceException("User delete", "User is deprecated"));
+                    throw new SessionControlServiceException("User delete", "User is deprecated");
                 }
                 String sessionId = getRandomString(75);
                 EllipticDiffieHellman diffieHellman = new EllipticDiffieHellman();
@@ -52,7 +53,7 @@ public class SessionControlService {
             });
     }
 
-    public Uni<SessionAuthorizationConfirmModel> confirmSession(String sessionId, String confirm, String signature) {
+    public Uni<SessionAuthorizationConfirmModel> confirmSession(String sessionId, String confirm, String signature, String ip) {
         return sessionControlRepository
             .getSession(sessionId, client)
             .onItem()
@@ -70,19 +71,25 @@ public class SessionControlService {
                             sessionModel.getSessionAuthorizationKey().toString(16)
                         );
                         if (!Equals.equals(serverConfirm, confirm)) {
-                            throw new RuntimeException(new SessionControlServiceException("Confirm is not true", "Invalid confirm"));
+                            throw new SessionControlServiceException("Confirm is not true", "Invalid confirm");
                         }
                         if (!Equals.equals(signature, sessionModel.getSessionSignature())) {
-                            throw new RuntimeException(new SessionControlServiceException("Signature is not true", "Invalid signature"));
+                            throw new SessionControlServiceException("Signature is not true", "Invalid signature");
                         }
                         String serverOutConfirm = SRP.H(sessionModel.getSessionAccountPublicKey() + confirm + sessionModel.getSessionAuthorizationKey());
                         String token = getRandomString(50), updateToken = getRandomString(70);
-                        return new SessionAuthorizationConfirmModel(sessionId, userAccountModel.getAccountId(), serverOutConfirm, null, token, updateToken);
+                        return new SessionAuthorizationConfirmModel(sessionId, userAccountModel.getAccountId(), serverOutConfirm, new ArrayList<>(), token, updateToken);
                     })
             );
     }
 
     public Uni<UUID> getUserUUID(String accountName) {
-        return userAccountRepository.getUserAccount(accountName, this.client).onItem().transform(UserAccountModel::getAccountId);
+        return userAccountRepository
+            .getUserAccount(accountName, this.client)
+            .onItem()
+            .transform(userAccountModel -> {
+                if (userAccountModel == null) throw new AuthorizationException("User not found", "UserAccountModel is java.lang.NullPointerException");
+                return userAccountModel.getAccountId();
+            });
     }
 }

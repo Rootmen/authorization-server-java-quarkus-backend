@@ -5,32 +5,14 @@ import java.util.UUID;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(name = "SessionAuthorizationInfo", description = "Информация о сессии")
-public class SessionAuthorizationInfoModel {
-
-    @NotBlank
-    @Schema(title = "Идентификатор сессии", required = true, pattern = "[1-9a-f][0-9a-f]+")
-    public final String session_id;
-
-    @NotBlank
-    @Schema(title = "Идентификатор аккаунта", required = true, pattern = "[1-9a-f][0-9a-f]+")
-    public final UUID session_account_id;
-
-    @NotBlank
-    @Schema(title = "Публичный ключ сервера", required = true, pattern = "[1-9a-f][0-9a-f]+")
-    public final String session_server_public_key;
-
-    @NotBlank
-    @Schema(title = "Дополнение к публичному ключу", required = true, pattern = "[0-9a-z]+")
-    public final String salt;
-
-    @NotBlank
-    @Schema(title = "X часть ключа сессии", required = true, pattern = "[1-9a-f][0-9a-f]+")
-    public final String x_cord;
-
-    @NotBlank
-    @Schema(title = "Y часть ключа сессии", required = true, pattern = "[1-9a-f][0-9a-f]+")
-    public final String y_cord;
-
+public record SessionAuthorizationInfoModel(
+    @Schema(title = "Идентификатор сессии", required = true, pattern = "[1-9a-f][0-9a-f]+") @NotBlank String session_id,
+    @Schema(title = "Идентификатор аккаунта", required = true, pattern = "[1-9a-f][0-9a-f]+") @NotBlank UUID session_account_id,
+    @Schema(title = "Публичный ключ сервера", required = true, pattern = "[1-9a-f][0-9a-f]+") @NotBlank String session_server_public_key,
+    @Schema(title = "Дополнение к публичному ключу", required = true, pattern = "[0-9a-z]+") @NotBlank String salt,
+    @Schema(title = "X часть ключа сессии", required = true, pattern = "[1-9a-f][0-9a-f]+") @NotBlank String x_cord,
+    @Schema(title = "Y часть ключа сессии", required = true, pattern = "[1-9a-f][0-9a-f]+") @NotBlank String y_cord
+) {
     public SessionAuthorizationInfoModel(String session_id, UUID session_account_id, String session_server_public_key, String salt, String x_cord, String y_cord) {
         this.session_id = session_id;
         this.session_account_id = session_account_id;

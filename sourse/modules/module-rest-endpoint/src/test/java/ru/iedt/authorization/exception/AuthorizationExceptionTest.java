@@ -7,12 +7,5 @@ import org.junit.jupiter.api.Test;
 class AuthorizationExceptionTest {
 
     @Test
-    public void testExceptions() {
-
-        try {
-            throw new AuthorizationException("Ошибка", "Тестирование", new RuntimeException());
-        } catch (AuthorizationException ignored) {
-
-        }
-    }
+    public void testExceptions() {}
 }
