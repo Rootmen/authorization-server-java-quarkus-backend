@@ -21,4 +21,6 @@ stages:
 test:
   image: gradle:5.0
   stage: test
-  script: ./gradlew test
+  script:
+    - chmod +x ./gradlew
+    - ./gradlew test
