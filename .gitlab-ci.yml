@@ -1,4 +1,4 @@
-image: quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:jdk-21
+image: alpine
 
 # DinD service is required for Testcontainers
 services:
@@ -19,8 +19,8 @@ stages:
   - package
 
 test:
-  image: gradle:5.0
+  image: alpine
   stage: test
   script:
-    - sudo chmod +x ./gradlew
+    - chmod +x ./gradlew
     - ./gradlew test
