@@ -19,7 +19,7 @@ stages:
   - package
 
 test:
-  image: gradle
+  image: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
   stage: test
   script:
     - chmod +x ./gradlew
