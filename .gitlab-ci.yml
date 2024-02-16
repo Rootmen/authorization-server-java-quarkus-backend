@@ -26,7 +26,6 @@ check:
   image: gradle:jdk21-graal
   stage: check
   script:
-    - docker info
     - gradle spotlessApply > spotlessApply.txt
   artifacts:
     paths:
