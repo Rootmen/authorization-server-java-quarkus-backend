@@ -22,5 +22,5 @@ test:
   image: gradle:5.0
   stage: test
   script:
-    - chmod +x ./gradlew
+    - sudo chmod +x ./gradlew
     - ./gradlew test
