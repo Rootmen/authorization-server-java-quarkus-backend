@@ -5,8 +5,6 @@ default:
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind
-  before_script:
-    - docker info
 
 variables:
   # When using dind service, you must instruct docker to talk with the
@@ -39,7 +37,7 @@ check:
   image: gradle:jdk21-graal
   stage: check
   script:
-    - chmod +x ./gradlew
+    - docker info
     - gradle spotlessApply > spotlessApply.txt
   artifacts:
     paths:
