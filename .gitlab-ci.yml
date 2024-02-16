@@ -1,11 +1,13 @@
-image: alpine
+image: quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:jdk-21
 
 stages:
   - test
   - package
 
 test:
-  script: ./gradlew :sourse:modules:submodules:submodules-database-repository:test --tests "ru.iedt.authorization.api.users.UsersServiceTest" > test.txt
+  script:
+    - chmod +x ./gradlew
+    - ./gradlew :sourse:modules:submodules:submodules-database-repository:test --tests "ru.iedt.authorization.api.users.UsersServiceTest" > test.txt
   artifacts:
     paths:
       - test.txt

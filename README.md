@@ -20,7 +20,7 @@ You can run your application in dev mode that enables live coding using:
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
-## Запуск отдельного модуля
+## Запуск отдельного модуляw
 
 ```shell script
 ./gradlew  sourse:modules:module-rest-endpoint:tasks quarkusDev --console=plain -Ptarget=module-rest-endpoint-service -Ddebug=5005
