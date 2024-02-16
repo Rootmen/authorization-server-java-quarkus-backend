@@ -1,10 +1,11 @@
 image: alpine
 
 # DinD service is required for Testcontainers
-services:
-  - name: docker:dind
-    # explicitly disable tls to avoid docker startup interruption
-    command: [ "--tls=false" ]
+default:
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
 
 variables:
   # Instruct Testcontainers to use the daemon of DinD.
@@ -65,6 +66,5 @@ build-docker:
   artifacts:
     paths:
       - /*authorization-server.module-rest-endpoint.tar
-    expire_in: 180 minutes
   only:
     - main
