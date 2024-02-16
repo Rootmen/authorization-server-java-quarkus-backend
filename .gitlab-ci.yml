@@ -1,0 +1,12 @@
+image: alpine
+
+stages:
+  - test
+  - package
+
+test:
+  script: ./gradlew :sourse:modules:submodules:submodules-database-repository:test --tests "ru.iedt.authorization.api.users.UsersServiceTest" > test.txt
+  artifacts:
+    paths:
+      - test.txt
+    expire_in: 60 minutes
