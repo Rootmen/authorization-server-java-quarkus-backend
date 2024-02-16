@@ -19,7 +19,7 @@ stages:
   - package
 
 test:
-  image: alpine
+  image: gradle
   stage: test
   script:
     - chmod +x ./gradlew
