@@ -13,16 +13,12 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   # Improve performance with overlayfs.
   DOCKER_DRIVER: overlay2
-  
+
 stages:
   - test
   - package
 
 test:
-  script:
-    - chmod +x ./gradlew
-    - ./gradlew :sourse:modules:submodules:submodules-database-repository:test --tests "ru.iedt.authorization.api.users.UsersServiceTest"
-  artifacts:
-    paths:
-      - test.txt
-    expire_in: 60 minutes
+  image: gradle:5.0
+  stage: test
+  script: ./gradlew test
