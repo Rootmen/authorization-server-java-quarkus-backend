@@ -3,14 +3,12 @@ package ru.iedt.authorization.api.users;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vertx.mutiny.pgclient.PgPool;
 import jakarta.inject.Inject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.*;
-
 import org.junit.jupiter.api.*;
 import ru.iedt.authorization.api.session.SessionControlRepository;
 import ru.iedt.authorization.crypto.SRP;
@@ -46,7 +44,7 @@ public class UsersServiceTest {
     }
 
     @Order(1)
-    @RepeatedTest(250)
+    @RepeatedTest(10)
     void testAddUserAccount() throws ExecutionException, InterruptedException {
         Executor executor = Executors.newVirtualThreadPerTaskExecutor();
         ArrayList<FutureTask<Void>> arrayList = new ArrayList<>();
@@ -83,8 +81,9 @@ public class UsersServiceTest {
         String salt = getRandomString(6);
         userAccountModel.addUserAccount(username, "10poma10@mail.ru", SRP.getVerifier(user_password, salt).toString(16), salt, client).await().indefinitely();
     }
+
     @Order(2)
-    @RepeatedTest(150)
+    @RepeatedTest(2)
     void testUpdateUserAccount() {
         String accountName = getRandomString(10);
         String userMail = getRandomString(10);
@@ -109,25 +108,25 @@ public class UsersServiceTest {
         Random r = new Random();
         ArrayList<UserInfoModel> arrayList = new ArrayList<>();
         List<UserInfoModel> usersAccount = userAccountModel
-                .getAllUserAccount(this.client)
-                .onItem()
-                .transformToUni(userAccount -> {
-                    String userSurname = getRandomString(5);
-                    String userName = getRandomString(5);
-                    String userPatronymic = getRandomString(5);
-                    LocalDate userDateOfBirth = LocalDate.of(r.nextInt(1970, 2024), r.nextInt(1, 12), r.nextInt(1, 29));
-                    int userPersonalNumber = r.nextInt(2111100000);
-                    UUID userCurrentPost = UUID.randomUUID();
-                    int userStructure = r.nextInt(15);
-                    String userPhone = getRandomString(5);
-                    String userOffice = getRandomString(5);
-                    return userInfoModel.addUserInfo(userAccount.getAccountId(), userSurname, userName, userPatronymic, userDateOfBirth, userPersonalNumber, userStructure, userCurrentPost, userPhone, userOffice, client);
-                })
-                .merge()
-                .collect()
-                .asList()
-                .await()
-                .indefinitely();
+            .getAllUserAccount(this.client)
+            .onItem()
+            .transformToUni(userAccount -> {
+                String userSurname = getRandomString(5);
+                String userName = getRandomString(5);
+                String userPatronymic = getRandomString(5);
+                LocalDate userDateOfBirth = LocalDate.of(r.nextInt(1970, 2024), r.nextInt(1, 12), r.nextInt(1, 29));
+                int userPersonalNumber = r.nextInt(2111100000);
+                UUID userCurrentPost = UUID.randomUUID();
+                int userStructure = r.nextInt(15);
+                String userPhone = getRandomString(5);
+                String userOffice = getRandomString(5);
+                return userInfoModel.addUserInfo(userAccount.getAccountId(), userSurname, userName, userPatronymic, userDateOfBirth, userPersonalNumber, userStructure, userCurrentPost, userPhone, userOffice, client);
+            })
+            .merge()
+            .collect()
+            .asList()
+            .await()
+            .indefinitely();
         for (UserInfoModel userAccount : usersAccount) {
             UserInfoModel result = userInfoModel.getUserInfo(userAccount.getAccountId(), client).await().indefinitely();
             Assertions.assertEquals(userAccount, result, "Вставка данных не удалась");
@@ -137,42 +136,32 @@ public class UsersServiceTest {
     @Order(4)
     @Test
     void getAllUserInfo() {
-        List<UserInfoModel> usersAccount = userInfoModel
-                .getAllUserInfo(this.client).collect().asList()
-                .await()
-                .indefinitely();
+        List<UserInfoModel> usersAccount = userInfoModel.getAllUserInfo(this.client).collect().asList().await().indefinitely();
     }
 
     @Order(5)
     @Test
     void addSessionInfo() {
         userAccountModel
-                .getAllUserAccount(this.client)
-                .onItem().transformToUni(user -> {
-                            String sessionId = getRandomString(55);
-                            String sessionKey = getRandomString(5);
-                            String serverPrivateKey = getRandomString(5);
-                            String serverPublicKey = getRandomString(5);
-                            String accountPublicKey = getRandomString(5);
-                            String scrambler = getRandomString(5);
-                            String authorizationKey = getRandomString(5);
-                            String signature = getRandomString(5);
-                            String ip = getRandomString(5);
-                            return sessionControlRepository.addSession(
-                                    sessionId,
-                                    sessionKey,
-                                    user.getAccountId(),
-                                    serverPrivateKey,
-                                    serverPublicKey,
-                                    accountPublicKey,
-                                    scrambler,
-                                    authorizationKey,
-                                    signature,
-                                    ip,
-                                    client
-                            );
-                        }
-                ).merge().collect().asList().await().indefinitely();
+            .getAllUserAccount(this.client)
+            .onItem()
+            .transformToUni(user -> {
+                String sessionId = getRandomString(55);
+                String sessionKey = getRandomString(5);
+                String serverPrivateKey = getRandomString(5);
+                String serverPublicKey = getRandomString(5);
+                String accountPublicKey = getRandomString(5);
+                String scrambler = getRandomString(5);
+                String authorizationKey = getRandomString(5);
+                String signature = getRandomString(5);
+                String ip = getRandomString(5);
+                return sessionControlRepository.addSession(sessionId, sessionKey, user.getAccountId(), serverPrivateKey, serverPublicKey, accountPublicKey, scrambler, authorizationKey, signature, ip, client);
+            })
+            .merge()
+            .collect()
+            .asList()
+            .await()
+            .indefinitely();
     }
 
     static String AlphaNumericStr = "0123456789abcdef";

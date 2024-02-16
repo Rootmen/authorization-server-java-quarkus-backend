@@ -9,13 +9,8 @@ repositories {
 	mavenLocal()
 }
 
-dependencies {
-	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-	testImplementation 'io.quarkus:quarkus-junit5'
-	testImplementation 'io.rest-assured:rest-assured'
-}
-
 quarkusDev.enabled = false
+quarkusAppPartsBuild.enabled = false
 
 group "${applicationGroup}"
 version "${applicationVersion}"

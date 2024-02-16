@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.samba.jcifs:jcifs:1.3.14-kohsuke-1'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    implementation 'org.jboss:jboss-vfs:3.3.0.Final'
 }
 
 group "${applicationGroup}"

@@ -4,7 +4,7 @@ image: alpine
 services:
   - name: docker:dind
     # explicitly disable tls to avoid docker startup interruption
-    command: ["--tls=false"]
+    command: [ "--tls=false" ]
 
 variables:
   # Instruct Testcontainers to use the daemon of DinD.
@@ -15,16 +15,56 @@ variables:
   DOCKER_DRIVER: overlay2
 
 stages:
+  - check
   - test
-  - package
+  - build-native
+  - build-docker
+  - deploy
+
+check:
+  image: gradle:jdk21-graal
+  stage: check
+  script:
+    - chmod +x ./gradlew
+    - gradle spotlessApply > spotlessApply.txt
+  artifacts:
+    paths:
+      - spotlessApply.txt
+    expire_in: 180 minutes
 
 test:
   image: gradle:jdk21-graal
   stage: test
   script:
-    - chmod +x ./gradlew
     - gradle test
   artifacts:
     paths:
       - /builds/systems-architecture/database/authorization-server-quarkus/sourse/modules/submodules/submodules-database-repository/build/reports/tests/test/index.html
-    expire_in: 60 minutes
+    expire_in: 180 minutes
+
+build-native:
+  image: gradle:jdk21-graal
+  stage: build-native
+  script:
+    - gradle build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+  artifacts:
+    paths:
+      - ./
+    expire_in: 180 minutes
+  only:
+    - main
+
+
+build-docker:
+  image: gradle:jdk21-graal
+  stage: build-docker
+  script:
+    - cd .\sourse\modules\module-rest-endpoint\
+    - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} .
+    - docker save authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} -o authorization-server.module-rest-endpoint.tar
+  artifacts:
+    paths:
+      - */authorization-server.module-rest-endpoint.tar
+    expire_in: 180 minutes
+  only:
+    - main

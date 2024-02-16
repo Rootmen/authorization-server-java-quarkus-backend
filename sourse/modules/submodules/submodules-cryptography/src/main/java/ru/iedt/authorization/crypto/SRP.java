@@ -12,13 +12,14 @@ public class SRP {
     public static BigInteger g = new BigInteger("2");
     public static BigInteger k = new BigInteger(H(n.toString(16) + g.toString(16)), 16);
     public static int nSize = n.bitLength();
-    private static final SecureRandom random = new SecureRandom();
+    private static SecureRandom random;
 
     public static BigInteger generateServerPublicKey(String passwordVerifier, BigInteger secretServerKey) {
         return g.modPow(secretServerKey, n).add(k.multiply(new BigInteger(passwordVerifier, 16)));
     }
 
     public static BigInteger generateServerPrivateKey() {
+        if (random == null) random = new SecureRandom();
         return new BigInteger(nSize, random).mod(n).add(BigInteger.ONE);
     }
 
@@ -45,6 +46,7 @@ public class SRP {
     }
 
     public static String getRandomString(int length) {
+        if (random == null) random = new SecureRandom();
         byte[] token = new byte[length];
         random.nextBytes(token);
         return new BigInteger(1, token).toString(16).toLowerCase();

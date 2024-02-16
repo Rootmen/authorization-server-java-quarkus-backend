@@ -13,7 +13,7 @@ bin/
 *.ipr
 *.iml
 *.iws
-
+*.tar
 # NetBeans
 nb-configuration.xml
 

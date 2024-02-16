@@ -10,26 +10,21 @@ import java.security.SecureRandom;
  * @autor Роман Шиндеров 2020
  */
 public class EllipticDiffieHellman {
+
     /**
      * Различные значения ЭК
      */
-    static BigInteger curveQ =
-            new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853951");
+    static BigInteger curveQ = new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853951");
 
-    static BigInteger curveA =
-            new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853948");
-    static BigInteger curveB =
-            new BigInteger("41058363725152142129326129780047268409114441015993725554835256314039467401291");
-    static BigInteger x =
-            new BigInteger("48439561293906451759052585252797914202762949526041747995844080717082404635286");
-    static BigInteger y =
-            new BigInteger("36134250956749795798585127919587881956611106672985015071877198253568414405109");
+    static BigInteger curveA = new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853948");
+    static BigInteger curveB = new BigInteger("41058363725152142129326129780047268409114441015993725554835256314039467401291");
+    static BigInteger x = new BigInteger("48439561293906451759052585252797914202762949526041747995844080717082404635286");
+    static BigInteger y = new BigInteger("36134250956749795798585127919587881956611106672985015071877198253568414405109");
     static BigInteger z = new BigInteger("1");
-    static BigInteger n =
-            new BigInteger("115792089210356248762697446949407573529996955224135760342422259061068512044369");
+    static BigInteger n = new BigInteger("115792089210356248762697446949407573529996955224135760342422259061068512044369");
     static int nSize = n.bitLength();
 
-    static SecureRandom secure = new SecureRandom();
+    static SecureRandom secure;
     /**
      * Приватный ключ
      */
@@ -38,13 +33,16 @@ public class EllipticDiffieHellman {
      * Публичный ключ
      */
     private final ECDHPoint publicKey;
+
     /**
      * Конструктор с генерацией  приватного ключа
      */
     public EllipticDiffieHellman() {
+        if (secure == null) secure = new SecureRandom();
         this.securityKey = new BigInteger(nSize, secure).mod(n).add(BigInteger.ONE);
         this.publicKey = new ECDHPoint(x, y, z, curveQ, curveA, curveB, n).multiply(securityKey);
     }
+
     /**
      * Конструктор с установленным значением {@link EllipticDiffieHellman#securityKey}
      */
@@ -52,6 +50,7 @@ public class EllipticDiffieHellman {
         this.securityKey = securityKey;
         this.publicKey = new ECDHPoint(x, y, z, curveQ, curveA, curveB, n).multiply(securityKey);
     }
+
     /**
      * Функция получения приватного ключа
      */
@@ -119,6 +118,7 @@ public class EllipticDiffieHellman {
      * @autor Роман Шиндеров 2020
      */
     public static class ECDHPoint {
+
         private BigInteger x;
         private BigInteger y;
         private BigInteger z;
@@ -147,29 +147,13 @@ public class EllipticDiffieHellman {
          * @return ECDHPoint * USERS_MODEL.xml
          */
         public ECDHPoint twice() {
-            BigInteger localX,
-                    localY,
-                    localZ,
-                    three = new BigInteger("3"),
-                    yz = this.y.multiply(this.z),
-                    yz2 = yz.multiply(this.y).mod(this.q),
-                    w = this.x.pow(2).multiply(three);
+            BigInteger localX, localY, localZ, three = new BigInteger("3"), yz = this.y.multiply(this.z), yz2 = yz.multiply(this.y).mod(this.q), w = this.x.pow(2).multiply(three);
             if (!BigInteger.ZERO.equals(this.a)) {
                 w = w.add(this.z.pow(2).multiply(this.a));
             }
             w = w.mod(this.q);
-            localX = w.pow(2)
-                    .subtract(this.x.shiftLeft(3).multiply(yz2))
-                    .shiftLeft(1)
-                    .multiply(yz)
-                    .mod(this.q);
-            localY = w.multiply(three)
-                    .multiply(this.x)
-                    .subtract(yz2.shiftLeft(1))
-                    .shiftLeft(2)
-                    .multiply(yz2)
-                    .subtract(w.multiply(w.multiply(w)))
-                    .mod(this.q);
+            localX = w.pow(2).subtract(this.x.shiftLeft(3).multiply(yz2)).shiftLeft(1).multiply(yz).mod(this.q);
+            localY = w.multiply(three).multiply(this.x).subtract(yz2.shiftLeft(1)).shiftLeft(2).multiply(yz2).subtract(w.multiply(w.multiply(w))).mod(this.q);
             localZ = yz.multiply(yz.multiply(yz)).shiftLeft(3).mod(this.q);
             this.x = localX;
             this.y = localY;
@@ -202,10 +186,8 @@ public class EllipticDiffieHellman {
          * @return ECDHPoint + point
          */
         public ECDHPoint add(ECDHPoint point) {
-            BigInteger u =
-                    point.y.multiply(this.z).subtract(this.y.multiply(point.z)).mod(this.q);
-            BigInteger v =
-                    point.x.multiply(this.z).subtract(this.x.multiply(point.z)).mod(this.q);
+            BigInteger u = point.y.multiply(this.z).subtract(this.y.multiply(point.z)).mod(this.q);
+            BigInteger v = point.x.multiply(this.z).subtract(this.x.multiply(point.z)).mod(this.q);
             if (BigInteger.ZERO.equals(v)) {
                 if (BigInteger.ZERO.equals(u)) {
                     return this.twice();
@@ -215,18 +197,8 @@ public class EllipticDiffieHellman {
             BigInteger v2 = v.multiply(v), v3 = v2.multiply(v), three = new BigInteger("3");
             BigInteger xv2 = this.x.multiply(v2);
             BigInteger zu2 = u.multiply(u).multiply(this.z);
-            BigInteger localX = zu2.subtract(xv2.shiftLeft(1))
-                    .multiply(point.z)
-                    .subtract(v3)
-                    .multiply(v)
-                    .mod(this.q);
-            BigInteger localY = xv2.multiply(three)
-                    .multiply(u)
-                    .subtract(this.y.multiply(v3))
-                    .subtract(zu2.multiply(u))
-                    .multiply(point.z)
-                    .add(u.multiply(v3))
-                    .mod(this.q);
+            BigInteger localX = zu2.subtract(xv2.shiftLeft(1)).multiply(point.z).subtract(v3).multiply(v).mod(this.q);
+            BigInteger localY = xv2.multiply(three).multiply(u).subtract(this.y.multiply(v3)).subtract(zu2.multiply(u)).multiply(point.z).add(u.multiply(v3)).mod(this.q);
             BigInteger localZ = v3.multiply(this.z).multiply(point.z).mod(this.q);
             this.x = localX;
             this.y = localY;
@@ -266,8 +238,7 @@ public class EllipticDiffieHellman {
          * Возвращает эллиптическую кривую в указанной системе счисления
          */
         public String toString(int radix) {
-            return "X:" + this.getX().toString(radix) + " Y:" + this.getY().toString(radix) + " Z:"
-                    + reduce(this.z).toString(radix);
+            return "X:" + this.getX().toString(radix) + " Y:" + this.getY().toString(radix) + " Z:" + reduce(this.z).toString(radix);
         }
 
         /**
