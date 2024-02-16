@@ -6,9 +6,8 @@ services:
     # explicitly disable tls to avoid docker startup interruption
     command: [ "--tls=false" ]
 
-default:
-  before_script:
-    - docker info
+before_script:
+  - docker info
 
 variables:
   # Instruct Testcontainers to use the daemon of DinD.
