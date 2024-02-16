@@ -19,7 +19,7 @@ stages:
   - package
 
 test:
-  image: gradle
+  image: gradle:jdk21-graal
   stage: test
   script:
     - chmod +x ./gradlew
