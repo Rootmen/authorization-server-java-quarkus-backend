@@ -24,3 +24,7 @@ test:
   script:
     - chmod +x ./gradlew
     - gradle test
+  artifacts:
+    paths:
+      - /builds/systems-architecture/database/authorization-server-quarkus/sourse/modules/submodules/submodules-database-repository/build/reports/tests/test/index.html
+    expire_in: 60 minutes
