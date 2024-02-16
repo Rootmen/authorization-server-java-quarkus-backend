@@ -64,7 +64,7 @@ build-docker:
     - docker save authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} -o authorization-server.module-rest-endpoint.tar
   artifacts:
     paths:
-      - */authorization-server.module-rest-endpoint.tar
+      - /*authorization-server.module-rest-endpoint.tar
     expire_in: 180 minutes
   only:
     - main
