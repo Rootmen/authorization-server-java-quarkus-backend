@@ -1,8 +1,7 @@
-image: alpine
+image: docker:24.0.5
 
 # DinD service is required for Testcontainers
 default:
-  image: docker:24.0.5
   services:
     - name: docker:dind
       # explicitly disable tls to avoid docker startup interruption
