@@ -17,9 +17,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
     implementation 'io.quarkus:quarkus-arc'
-    implementation project(path: ':sourse:modules:submodules:submodules-authorization-service')
-    implementation project(path: ':sourse:modules:submodules:submodules-structures')
-    implementation project(path: ':sourse:modules:exception')
+    implementation project(path: ':source:modules:submodules:submodules-authorization-service')
+    implementation project(path: ':source:modules:submodules:submodules-structures')
+    implementation project(path: ':source:modules:exception')
     testImplementation 'io.quarkus:quarkus-arc'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

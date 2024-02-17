@@ -2,8 +2,6 @@ default:
   image: rootmen/gradle-docker-builder
   services:
     - docker:24.0.5-dind
-  before_script:
-    - docker info
 
 variables:
   # When using dind service, you must instruct docker to talk with the
@@ -48,7 +46,7 @@ test:
     - gradle test
   artifacts:
     paths:
-      - /builds/systems-architecture/database/authorization-server-quarkus/sourse/modules/submodules/submodules-database-repository/build/reports/tests/test/index.html
+      - source/modules/submodules/submodules-database-repository/build/reports/tests/test/index.html
     expire_in: 180 minutes
 
 build-native:
@@ -58,7 +56,7 @@ build-native:
     - gradle build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
     paths:
-      - ./
+      - source/modules/module-rest-endpoint/build
     expire_in: 180 minutes
   only:
     - main
@@ -68,7 +66,7 @@ build-docker:
   image: rootmen/gradle-docker-builder
   stage: build-docker
   script:
-    - cd .\sourse\modules\module-rest-endpoint\
+    - cd .\source\modules\module-rest-endpoint\
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} .
     - docker save authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} -o authorization-server.module-rest-endpoint.tar
   artifacts:

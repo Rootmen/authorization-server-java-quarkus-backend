@@ -16,10 +16,10 @@ dependencies {
     implementation 'ru.iedt.database.request:structures:1.0.13'
     implementation 'ru.iedt.database.request:store:1.0.13'
     implementation 'ru.iedt.database.request:database-controller:1.0.13'
-    implementation project(path: ':sourse:modules:exception')
-    implementation project(path: ':sourse:modules:submodules:submodules-structures')
+    implementation project(path: ':source:modules:exception')
+    implementation project(path: ':source:modules:submodules:submodules-structures')
     testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation project(path: ':sourse:modules:submodules:submodules-cryptography')
+    testImplementation project(path: ':source:modules:submodules:submodules-cryptography')
 
 }
 

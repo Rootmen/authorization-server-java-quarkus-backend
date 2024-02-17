@@ -12,10 +12,10 @@ repositories {
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-reactive-pg-client'
-    implementation project(path: ':sourse:modules:submodules:submodules-database-repository')
-    implementation project(path: ':sourse:modules:submodules:submodules-structures')
-    implementation project(path: ':sourse:modules:submodules:submodules-cryptography')
-    implementation project(path: ':sourse:modules:exception')
+    implementation project(path: ':source:modules:submodules:submodules-database-repository')
+    implementation project(path: ':source:modules:submodules:submodules-structures')
+    implementation project(path: ':source:modules:submodules:submodules-cryptography')
+    implementation project(path: ':source:modules:exception')
 }
 
 group "${applicationGroup}"

@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(path: ':sourse:modules:exception')
+    implementation project(path: ':source:modules:exception')
 }
 
 group "${applicationGroup}"
