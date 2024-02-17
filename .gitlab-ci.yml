@@ -1,15 +1,27 @@
-services:
-  - name: docker:dind
-    # explicitly disable tls to avoid docker startup interruption
-    command: ["--tls=false"]
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
 
 variables:
-  # Instruct Testcontainers to use the daemon of DinD, use port 2375 for non-tls connections.
-  DOCKER_HOST: "tcp://docker:2375"
-  # Instruct Docker not to start over TLS.
+  # When using dind service, you must instruct docker to talk with the
+  # daemon started inside of the service. The daemon is available with
+  # a network connection instead of the default /var/run/docker.sock socket.
+  #
+  # The 'docker' hostname is the alias of the service container as described at
+  # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
+  #
+  # If you're using GitLab Runner 12.7 or earlier with the Kubernetes executor and Kubernetes 1.6 or earlier,
+  # the variable must be set to tcp://localhost:2375 because of how the
+  # Kubernetes executor connects services to the job container
+  # DOCKER_HOST: tcp://localhost:2375
+  #
+  DOCKER_HOST: tcp://docker:2375
+  #
+  # This instructs Docker not to start over TLS.
   DOCKER_TLS_CERTDIR: ""
-  # Improve performance with overlayfs.
-  DOCKER_DRIVER: overlay2
 
 stages:
   - check
@@ -25,6 +37,7 @@ check:
     - gradle spotlessApply > spotlessApply.txt
   artifacts:
     paths:
+      - docker info
       - spotlessApply.txt
     expire_in: 180 minutes
 
