@@ -72,6 +72,6 @@ build-docker:
     - docker save authorization-server/module-rest-endpoint:"$CI_COMMIT_REF_NAME" -o authorization-server.module-rest-endpoint.tar
   artifacts:
     paths:
-      - /source/modules/module-rest-endpoint/authorization-server.module-rest-endpoint.tar
+      - source/modules/module-rest-endpoint/authorization-server.module-rest-endpoint.tar
   only:
     - main
