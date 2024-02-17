@@ -31,7 +31,7 @@ stages:
   - deploy
 
 check:
-  image: gradle:jdk21-graal
+  image: docker:24.0.5
   stage: check
   script:
     - gradle spotlessApply > spotlessApply.txt
