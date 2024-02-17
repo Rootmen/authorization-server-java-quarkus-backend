@@ -1,5 +1,5 @@
 default:
-  image: docker:24.0.5
+  image: gradle:jdk21-graal
   services:
     - docker:24.0.5-dind
   before_script:
@@ -31,7 +31,7 @@ stages:
   - deploy
 
 check:
-  image: docker:24.0.5
+  image: gradle:jdk21-graal
   stage: check
   script:
     - gradle spotlessApply > spotlessApply.txt
