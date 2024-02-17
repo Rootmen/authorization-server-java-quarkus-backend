@@ -68,10 +68,10 @@ build-docker:
   stage: build-docker
   script:
     - cd ./source/modules/module-rest-endpoint
-    - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} .
-    - docker save authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} -o authorization-server.module-rest-endpoint.tar
+    - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:"$CI_COMMIT_REF_NAME" .
+    - docker save authorization-server/module-rest-endpoint:"$CI_COMMIT_REF_NAME" -o authorization-server.module-rest-endpoint.tar
   artifacts:
     paths:
-      - /*authorization-server.module-rest-endpoint.tar
+      - /source/modules/module-rest-endpoint/authorization-server.module-rest-endpoint.tar
   only:
     - main
