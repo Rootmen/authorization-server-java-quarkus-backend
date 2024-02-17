@@ -67,7 +67,7 @@ build-docker:
   image: rootmen/gradle-docker-builder
   stage: build-docker
   script:
-    - cd .\source\modules\module-rest-endpoint\
+    - cd ./source/modules/module-rest-endpoint
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} .
     - docker save authorization-server/module-rest-endpoint:${CI_COMMIT_REF_NAME} -o authorization-server.module-rest-endpoint.tar
   artifacts:
