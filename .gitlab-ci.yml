@@ -56,7 +56,8 @@ build-native:
     - gradle build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
     paths:
-      - source/modules/module-rest-endpoint/build
+      - source/modules/module-rest-endpoint/build/module-rest-endpoint-1.0-SNAPSHOT-runner
+      - source/modules/module-rest-endpoint/build/resources/*
     expire_in: 180 minutes
   only:
     - main
