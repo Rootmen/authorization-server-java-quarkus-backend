@@ -1,5 +1,5 @@
 default:
-  image: gradle:jdk21-graal
+  image: gradle-docker-builder:1.0.0
   services:
     - docker:24.0.5-dind
   before_script:
@@ -31,7 +31,7 @@ stages:
   - deploy
 
 check:
-  image: gradle:jdk21-graal
+  image: gradle-docker-builder:1.0.0
   stage: check
   script:
     - gradle spotlessApply > spotlessApply.txt
@@ -42,7 +42,7 @@ check:
     expire_in: 180 minutes
 
 test:
-  image: gradle:jdk21-graal
+  image: gradle-docker-builder:1.0.0
   stage: test
   script:
     - gradle test
@@ -52,7 +52,7 @@ test:
     expire_in: 180 minutes
 
 build-native:
-  image: gradle:jdk21-graal
+  image: gradle-docker-builder:1.0.0
   stage: build-native
   script:
     - gradle build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
@@ -65,7 +65,7 @@ build-native:
 
 
 build-docker:
-  image: gradle:jdk21-graal
+  image: gradle-docker-builder:1.0.0
   stage: build-docker
   script:
     - cd .\sourse\modules\module-rest-endpoint\
