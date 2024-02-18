@@ -91,8 +91,8 @@ deploy-rest-endpoint:
   script:
     - cd ./docker
     - scp ./* $SSH_USER@$VM_IPADDRESS:/opt/edox-authorization
-    - echo "\nIMAGE_TAG="
-    - echo "$CI_COMMIT_REF_NAME"
+    - touch .env
+    - echo "IMAGE_TAG=$CI_COMMIT_REF_NAME" >> .env
     - ssh $SSH_USER@$VM_IPADDRESS "/bin/bash -s" < deployscript.sh
   artifacts:
     paths:
