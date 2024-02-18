@@ -17,7 +17,7 @@ services:
     labels:
       org.label-schema.group: "edox-authorization"
   module-rest-authorization-endpoint:
-    image: authorization-server/module-rest-authorization-endpoint:${$IMAGE_TAG}
+    image: authorization-server/module-rest-authorization-endpoint:${IMAGE_TAG}
     hostname: module-rest-authorization-endpoint-service
     container_name: module-rest-authorization-endpoint-service
     restart: unless-stopped
