@@ -23,7 +23,7 @@ You can run your application in dev mode that enables live coding using:
 ## Запуск отдельного модуляw
 
 ```shell script
-./gradlew  source:modules:module-rest-endpoint:tasks quarkusDev --console=plain -Ptarget=module-rest-endpoint-service -Ddebug=5005
+./gradlew  source:modules:module-rest-authorization-endpoint:tasks quarkusDev --console=plain -Ptarget=module-rest-authorization-endpoint-service -Ddebug=5005
 ```
 
 ## Packaging and running the application

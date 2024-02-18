@@ -53,25 +53,49 @@ build-native:
   image: rootmen/gradle-docker-builder
   stage: build-native
   script:
-    - gradle build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+    - gradle :source:modules:module-rest-authorization-endpoint:build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
     paths:
-      - source/modules/module-rest-endpoint/build/module-rest-endpoint-1.0-SNAPSHOT-runner
-      - source/modules/module-rest-endpoint/build/resources/*
+      - source/modules/module-rest-authorization-endpoint/build/module-rest-authorization-endpoint-1.0-SNAPSHOT-runner
+      - source/modules/module-rest-authorization-endpoint/build/resources/*
     expire_in: 180 minutes
   only:
     - main
 
 
-build-docker:
+build-docker-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: build-docker
   script:
-    - cd ./source/modules/module-rest-endpoint
-    - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-endpoint:"$CI_COMMIT_REF_NAME" .
-    - docker save authorization-server/module-rest-endpoint:"$CI_COMMIT_REF_NAME" -o authorization-server.module-rest-endpoint.tar
+    - cd ./source/modules/module-rest-authorization-endpoint
+    - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME" .
+    - docker save authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME" -o authorization-server.module-rest-authorization-endpoint.tar
+    - mv authorization-server.module-rest-authorization-endpoint.tar ./../../../docker/images
   artifacts:
     paths:
-      - source/modules/module-rest-endpoint/authorization-server.module-rest-endpoint.tar
+      - docker/images/authorization-server.module-rest-authorization-endpoint.tar
+  only:
+    - main
+
+deploy-rest-endpoint:
+  image: rootmen/gradle-docker-builder
+  stage: deploy
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - cd ./docker
+    - scp ./* $SSH_USER@$VM_IPADDRESS:/opt/edox-authorization
+    - echo "\nIMAGE_TAG="
+    - echo "$CI_COMMIT_REF_NAME"
+    - ssh $SSH_USER@$VM_IPADDRESS "/bin/bash -s" < deployscript.sh
+  artifacts:
+    paths:
+      - docker/images/authorization-server.module-rest-authorization-endpoint.tar
   only:
     - main

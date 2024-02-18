@@ -1,0 +1,29 @@
+version: "3.7"
+name: "edox-authorization"
+services:
+  rabbitmq:
+    image: rabbitmq:3.12.6-management-alpine
+    hostname: rabbitmq-director-secretary
+    container_name: rabbitmq-director-secretary
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=rmuser
+      - RABBITMQ_DEFAULT_PASS=rmpassword
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq/mnesia
+    networks:
+      - app-authorization
+    labels:
+      org.label-schema.group: "edox-authorization"
+  module-rest-authorization-endpoint:
+    image: authorization-server/module-rest-authorization-endpoint:${$IMAGE_TAG}
+    hostname: module-rest-authorization-endpoint-service
+    container_name: module-rest-authorization-endpoint-service
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - app-authorization
+    labels:
+      org.label-schema.group: "edox-authorization"
