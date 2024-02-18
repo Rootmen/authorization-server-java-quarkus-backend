@@ -27,3 +27,7 @@ services:
       - app-authorization
     labels:
       org.label-schema.group: "edox-authorization"
+
+networks:
+  app-authorization:
+    driver: bridge
