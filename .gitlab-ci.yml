@@ -2,7 +2,7 @@ default:
   image: rootmen/gradle-docker-builder
 
 variables:
-  TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
+  TESTCONTAINERS_HOST_OVERRIDE: "gitlabrunner.iedt.com.rzd"
   
 stages:
   - check
