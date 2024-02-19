@@ -72,6 +72,7 @@ build-docker-rest-endpoint:
     - cd ./source/modules/module-rest-authorization-endpoint
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" .
     - docker save authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" -o authorization-server.module-rest-authorization-endpoint.tar
+    - mkdir -p "$CI_BUILDS_DIR"/docker/images/
     - mv authorization-server.module-rest-authorization-endpoint.tar "$CI_BUILDS_DIR"/docker/images/
   artifacts:
     paths:
