@@ -76,7 +76,7 @@ build-docker-rest-endpoint:
     - mv authorization-server.module-rest-authorization-endpoint.tar "CI_PROJECT_DIR"/docker/images/
   artifacts:
     paths:
-      - docker/images/authorization-server.module-rest-authorization-endpoint.tar
+      - "CI_PROJECT_DIR"/docker/images/authorization-server.module-rest-authorization-endpoint.tar
   only:
     - main
 
