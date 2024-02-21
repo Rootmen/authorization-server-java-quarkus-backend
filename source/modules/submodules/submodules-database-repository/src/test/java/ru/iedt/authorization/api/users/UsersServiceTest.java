@@ -73,7 +73,7 @@ public class UsersServiceTest {
         }
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testAddUserRootmen() throws ExecutionException, InterruptedException {
         String username = "rootmen";
@@ -82,7 +82,7 @@ public class UsersServiceTest {
         userAccountModel.addUserAccount(username, "10poma10@mail.ru", SRP.getVerifier(user_password, salt).toString(16), salt, client).await().indefinitely();
     }
 
-    @Order(2)
+    @Order(3)
     @RepeatedTest(2)
     void testUpdateUserAccount() {
         String accountName = getRandomString(10);
@@ -102,7 +102,7 @@ public class UsersServiceTest {
         Assertions.assertEquals(accountNameUpdate, accountName, "Обновление данных не удалось");
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     void addUserInfo() {
         Random r = new Random();
@@ -133,13 +133,13 @@ public class UsersServiceTest {
         }
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     void getAllUserInfo() {
         List<UserInfoModel> usersAccount = userInfoModel.getAllUserInfo(this.client).collect().asList().await().indefinitely();
     }
 
-    @Order(5)
+    @Order(6)
     @Test
     void addSessionInfo() {
         userAccountModel
