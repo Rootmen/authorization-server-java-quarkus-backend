@@ -39,8 +39,6 @@ check:
 test:
   image: rootmen/gradle-docker-builder
   stage: test
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - gradle test
   artifacts:
@@ -68,8 +66,6 @@ build-native:
 build-docker-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: build-docker
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - cd ./source/modules/module-rest-authorization-endpoint
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" .
