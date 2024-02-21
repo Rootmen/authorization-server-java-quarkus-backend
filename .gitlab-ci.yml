@@ -33,15 +33,8 @@ stages:
 check:
   image: rootmen/gradle-docker-builder
   stage: check
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
-    - gradle spotlessApply > spotlessApply.txt
-  artifacts:
-    paths:
-      - docker info
-      - spotlessApply.txt
-    expire_in: 180 minutes
+    - gradle spotlessCheck
 
 test:
   image: rootmen/gradle-docker-builder
@@ -54,12 +47,13 @@ test:
     paths:
       - source/modules/submodules/submodules-database-repository/build/reports/tests/test/index.html
     expire_in: 180 minutes
+  only:
+    - main
+    - dev-release
 
 build-native:
   image: rootmen/gradle-docker-builder
   stage: build-native
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - gradle :source:modules:module-rest-authorization-endpoint:build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
@@ -91,14 +85,13 @@ build-docker-rest-endpoint:
 deploy-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: deploy
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )'
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - chmod 700 ~/.sshuild-nativ
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
