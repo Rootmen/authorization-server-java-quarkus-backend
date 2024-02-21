@@ -33,6 +33,8 @@ stages:
 check:
   image: rootmen/gradle-docker-builder
   stage: check
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - gradle spotlessApply > spotlessApply.txt
   artifacts:
@@ -44,6 +46,8 @@ check:
 test:
   image: rootmen/gradle-docker-builder
   stage: test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - gradle test
   artifacts:
@@ -54,6 +58,8 @@ test:
 build-native:
   image: rootmen/gradle-docker-builder
   stage: build-native
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - gradle :source:modules:module-rest-authorization-endpoint:build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
@@ -68,6 +74,8 @@ build-native:
 build-docker-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: build-docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - cd ./source/modules/module-rest-authorization-endpoint
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" .
@@ -83,6 +91,8 @@ build-docker-rest-endpoint:
 deploy-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )'
     - eval $(ssh-agent -s)
