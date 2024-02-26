@@ -1,4 +1,4 @@
-package ru.iedt.authorization.api.users;
+package ru.iedt.authorization.api.repository.users;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;

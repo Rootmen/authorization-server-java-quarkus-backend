@@ -122,14 +122,15 @@
         <Parameters>
             <Parameter name="ATTEMPT_ACCOUNT_ID" type="uuid"/>
             <Parameter name="ATTEMPT_APP_ID" type="uuid"/>
+            <Parameter name="ATTEMPT_IP" type="string"/>
             <Parameter name="ATTEMPT_SIGNATURE" type="string"/>
             <Parameter name="ATTEMPT_SUCCESS" type="boolean"/>
         </Parameters>
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    INSERT INTO DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT(ACCOUNT_ID, APP_ID, SIGNATURE, SUCCESS)
-                    VALUES ($ATTEMPT_ACCOUNT_ID$, $ATTEMPT_APP_ID$, $ATTEMPT_SIGNATURE$, $ATTEMPT_SUCCESS$);
+                    INSERT INTO DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT(ACCOUNT_ID, APP_ID, IP, SIGNATURE, SUCCESS)
+                    VALUES ($ATTEMPT_ACCOUNT_ID$, $ATTEMPT_APP_ID$, $ATTEMPT_IP$, $ATTEMPT_SIGNATURE$, $ATTEMPT_SUCCESS$);
                 ]]>
             </SQL>
         </Query>

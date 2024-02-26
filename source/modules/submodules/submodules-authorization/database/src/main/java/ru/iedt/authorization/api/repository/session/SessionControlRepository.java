@@ -117,10 +117,11 @@ public class SessionControlRepository {
             .transform(iterator -> iterator.hasNext() ? RefreshToken.from(iterator.next()) : null);
     }
 
-    public Uni<Void> authorizationAttempt(UUID accountId, UUID appId, String signature, boolean success, PgPool client) {
+    public Uni<Void> authorizationAttempt(UUID accountId, UUID appId, String ip, String signature, boolean success, PgPool client) {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("ATTEMPT_ACCOUNT_ID", new ParameterInput("ATTEMPT_ACCOUNT_ID", accountId.toString()));
         parameters.put("ATTEMPT_APP_ID", new ParameterInput("ATTEMPT_APP_ID", appId.toString()));
+        parameters.put("ATTEMPT_IP", new ParameterInput("ATTEMPT_IP", ip));
         parameters.put("ATTEMPT_SIGNATURE", new ParameterInput("ATTEMPT_SIGNATURE", signature));
         parameters.put("ATTEMPT_SUCCESS", new ParameterInput("ATTEMPT_SUCCESS", Boolean.valueOf(success).toString()));
         return databaseController.runningQuerySet("SESSION_CONTROL", "ADD_AUTHORIZATION_ATTEMPT", parameters, client).replaceWithVoid();

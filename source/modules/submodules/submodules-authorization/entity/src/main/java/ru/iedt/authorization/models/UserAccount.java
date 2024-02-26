@@ -16,7 +16,7 @@ public class UserAccount {
     private final LocalDateTime account_last_password_update;
     private int account_password_reset_interval;
     private int account_lock_count;
-    private int account_lock_time;
+    private final int account_lock_time;
     private final boolean is_deprecated;
     private final boolean is_system;
 

@@ -13,7 +13,7 @@ public class Users extends QueryStoreDefinition {
 
     @Override
     public URI getStorePath() throws URISyntaxException {
-        return Objects.requireNonNull(this.getClass().getResource("/query/USER.xml")).toURI();
+        return Objects.requireNonNull(this.getClass().getResource("/query/USERS.xml")).toURI();
     }
 
     @Override

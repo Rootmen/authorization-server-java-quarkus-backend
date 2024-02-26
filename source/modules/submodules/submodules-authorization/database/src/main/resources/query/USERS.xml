@@ -168,4 +168,32 @@
             </SQL>
         </Query>
     </QuerySet>
+
+    <QuerySet ID="CHECK_ACCOUNT_IS_BLOCK">
+        <Parameters>
+            <Parameter name="ACCOUNT_UUID" type="uuid"/>
+            <Parameter name="ACCOUNT_IP" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    WITH USERS_ACCOUNT AS (SELECT *
+                                           FROM DNAUTHORIZATION.USERS_ACCOUNT AS USERS_ACCOUNT
+                                           WHERE ACCOUNT_ID = $ACCOUNT_UUID$),
+                         LOG_LIST AS (SELECT ACCOUNT_ID, APP_ID, TIME, IP, SIGNATURE, SUCCESS
+                                      FROM DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT AS LOG
+                                      WHERE ACCOUNT_ID = $ACCOUNT_UUID$
+                                        AND TIME BETWEEN CURRENT_TIMESTAMP - ((SELECT USERS_ACCOUNT.ACCOUNT_LOCK_TIME
+                                                                               FROM USERS_ACCOUNT) ||
+                                                                              ' MINUTES')::INTERVAL
+                                          AND CURRENT_TIMESTAMP
+                                        AND SUCCESS = FALSE
+                                        AND IP = $ACCOUNT_IP$)
+                    SELECT COALESCE(USERS_ACCOUNT.ACCOUNT_LOCK_TIME - (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - (SELECT MIN(LOG_LIST.TIME) FROM LOG_LIST)) / 60)::INT, 0)                                                        AS TIME_TO_UNLOCK,
+                           (SELECT COUNT(*) FROM LOG_LIST) > USERS_ACCOUNT.ACCOUNT_LOCK_COUNT AS IS_BLOCK
+                    FROM USERS_ACCOUNT;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
 </Definition>

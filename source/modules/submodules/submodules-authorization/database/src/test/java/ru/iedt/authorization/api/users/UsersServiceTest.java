@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
 import ru.iedt.authorization.api.repository.session.SessionControlRepository;
+import ru.iedt.authorization.api.repository.users.UserAccountRepository;
+import ru.iedt.authorization.api.repository.users.UserInfoRepository;
 import ru.iedt.authorization.crypto.SRP;
 import ru.iedt.authorization.models.UserAccount;
 import ru.iedt.authorization.models.UserInformation;

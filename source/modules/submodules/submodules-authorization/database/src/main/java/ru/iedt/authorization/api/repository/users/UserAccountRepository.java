@@ -1,4 +1,4 @@
-package ru.iedt.authorization.api.users;
+package ru.iedt.authorization.api.repository.users;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
@@ -9,6 +9,7 @@ import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.UUID;
 import ru.iedt.authorization.models.UserAccount;
+import ru.iedt.authorization.models.UserAccountBlock;
 import ru.iedt.database.request.controller.DatabaseController;
 import ru.iedt.database.request.controller.parameter.ParameterInput;
 
@@ -87,5 +88,19 @@ public class UserAccountRepository {
             .transform(RowSet::iterator)
             .onItem()
             .transform(iterator -> iterator.hasNext() ? UserAccount.from(iterator.next()) : null);
+    }
+
+    public Uni<UserAccountBlock> accountIsBlock(UUID accountId, String ip, PgPool client) {
+        HashMap<String, ParameterInput> parameters = new HashMap<>();
+        parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_NAME", accountId.toString()));
+        parameters.put("ACCOUNT_IP", new ParameterInput("ACCOUNT_IP", ip));
+        return databaseController
+            .runningQuerySet("USERS", "CHECK_ACCOUNT_IS_BLOCK", parameters, client)
+            .onItem()
+            .transform(element -> element.get(0).get("main"))
+            .onItem()
+            .transform(RowSet::iterator)
+            .onItem()
+            .transform(iterator -> iterator.hasNext() ? UserAccountBlock.from(iterator.next()) : null);
     }
 }
