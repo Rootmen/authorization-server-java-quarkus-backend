@@ -1,24 +1,23 @@
 package ru.iedt.authorization.api.store;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import ru.iedt.database.request.store.DefinitionStore;
-import ru.iedt.database.request.store.QueryStoreDefinition;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import ru.iedt.database.request.store.DefinitionStore;
+import ru.iedt.database.request.store.QueryStoreDefinition;
 
 @RegisterForReflection
 @DefinitionStore
-public class UsersModel extends QueryStoreDefinition {
+public class Users extends QueryStoreDefinition {
+
     @Override
     public URI getStorePath() throws URISyntaxException {
-        return Objects.requireNonNull(this.getClass().getResource("/query/USERS_MODEL.xml"))
-                .toURI();
+        return Objects.requireNonNull(this.getClass().getResource("/query/USER.xml")).toURI();
     }
 
     @Override
     public String getStoreName() {
-        return "USERS_MODEL";
+        return "USERS";
     }
 }

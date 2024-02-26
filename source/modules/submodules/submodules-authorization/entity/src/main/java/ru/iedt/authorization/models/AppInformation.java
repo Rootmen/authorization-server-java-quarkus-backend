@@ -1,11 +1,11 @@
 package ru.iedt.authorization.models;
 
 import io.vertx.mutiny.sqlclient.Row;
-
 import java.util.Objects;
 import java.util.UUID;
 
 public class AppInformation {
+
     private final UUID app_id;
     private final String app_name;
     private final String app_secret;
@@ -56,8 +56,7 @@ public class AppInformation {
         if (!Objects.equals(app_id, that.app_id)) return false;
         if (!Objects.equals(app_name, that.app_name)) return false;
         if (!Objects.equals(app_secret, that.app_secret)) return false;
-        if (!Objects.equals(app_token_secret, that.app_token_secret))
-            return false;
+        if (!Objects.equals(app_token_secret, that.app_token_secret)) return false;
         if (!Objects.equals(redirect_url, that.redirect_url)) return false;
         return Objects.equals(app_image, that.app_image);
     }
@@ -74,13 +73,6 @@ public class AppInformation {
     }
 
     public static AppInformation from(Row row) {
-        return new AppInformation(
-                row.getUUID("app_id"),
-                row.getString("app_name"),
-                row.getString("app_secret"),
-                row.getString("app_token_secret"),
-                row.getString("redirect_url"),
-                row.getString("app_image")
-        );
+        return new AppInformation(row.getUUID("app_id"), row.getString("app_name"), row.getString("app_secret"), row.getString("app_token_secret"), row.getString("redirect_url"), row.getString("app_image"));
     }
 }

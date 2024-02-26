@@ -9,6 +9,7 @@
                             SESSION_KEY,
                             SESSION_START,
                             SESSION_ACCOUNT_ID,
+                            SESSION_APP_ID,
                             SESSION_SERVER_PRIVATE_KEY,
                             SESSION_SERVER_PUBLIC_KEY,
                             SESSION_ACCOUNT_PUBLIC_KEY,
@@ -47,6 +48,7 @@
             <Parameter name="SESSION_ID" type="string"/>
             <Parameter name="SESSION_KEY" type="string"/>
             <Parameter name="SESSION_ACCOUNT_ID" type="uuid"/>
+            <Parameter name="SESSION_APP_ID" type="uuid"/>
             <Parameter name="SESSION_SERVER_PRIVATE_KEY" type="string"/>
             <Parameter name="SESSION_SERVER_PUBLIC_KEY" type="string"/>
             <Parameter name="SESSION_ACCOUNT_PUBLIC_KEY" type="string"/>
@@ -61,6 +63,7 @@
                     INSERT INTO DNAUTHORIZATION.ACTIVE_SESSIONS(SESSION_ID,
                                                                 SESSION_KEY,
                                                                 SESSION_ACCOUNT_ID,
+                                                                SESSION_APP_ID,
                                                                 SESSION_SERVER_PRIVATE_KEY,
                                                                 SESSION_SERVER_PUBLIC_KEY,
                                                                 SESSION_ACCOUNT_PUBLIC_KEY,
@@ -71,6 +74,7 @@
                     VALUES ($SESSION_ID$,
                             $SESSION_KEY$,
                             $SESSION_ACCOUNT_ID$,
+                            $SESSION_APP_ID$,
                             $SESSION_SERVER_PRIVATE_KEY$,
                             $SESSION_SERVER_PUBLIC_KEY$,
                             $SESSION_ACCOUNT_PUBLIC_KEY$,
@@ -110,6 +114,22 @@
                     INSERT INTO  DNAUTHORIZATION.REFRESH_TOKENS(SESSION_ACCOUNT_ID, SESSION_REFRESH_TOKENS)
                     VALUES ($SESSION_ACCOUNT_ID$, $SESSION_REFRESH_TOKENS_START$)
                     RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_AUTHORIZATION_ATTEMPT">
+        <Parameters>
+            <Parameter name="ATTEMPT_ACCOUNT_ID" type="uuid"/>
+            <Parameter name="ATTEMPT_APP_ID" type="uuid"/>
+            <Parameter name="ATTEMPT_SIGNATURE" type="string"/>
+            <Parameter name="ATTEMPT_SUCCESS" type="boolean"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT(ACCOUNT_ID, APP_ID, SIGNATURE, SUCCESS)
+                    VALUES ($ATTEMPT_ACCOUNT_ID$, $ATTEMPT_APP_ID$, $ATTEMPT_SIGNATURE$, $ATTEMPT_SUCCESS$);
                 ]]>
             </SQL>
         </Query>

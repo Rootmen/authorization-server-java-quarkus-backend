@@ -12,7 +12,10 @@
                            ACCOUNT_SALT,
                            ACCOUNT_LAST_PASSWORD_UPDATE,
                            ACCOUNT_PASSWORD_RESET_INTERVAL,
-                           ACCOUNT_IS_DEPRECATED
+                           ACCOUNT_LOCK_COUNT,
+                           ACCOUNT_LOCK_TIME,
+                           ACCOUNT_IS_DEPRECATED,
+                           ACCOUNT_IS_SYSTEM
                   FROM DNAUTHORIZATION.USERS_ACCOUNT]]>
         </Template>
         <Template ID="SELECT_USERS_INFO">

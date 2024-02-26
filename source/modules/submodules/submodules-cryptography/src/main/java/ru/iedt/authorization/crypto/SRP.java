@@ -15,7 +15,7 @@ public class SRP {
     private static SecureRandom random;
 
     public static BigInteger generateServerPublicKey(String passwordVerifier, BigInteger secretServerKey) {
-        return g.modPow(secretServerKey, n).add(k.multiply(new BigInteger(passwordVerifier, 16)));
+        return g.modPow(secretServerKey, n).add(k.multiply(new BigInteger(passwordVerifier, 16))).modPow(BigInteger.valueOf(1), n);
     }
 
     public static BigInteger generateServerPrivateKey() {

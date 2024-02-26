@@ -9,7 +9,6 @@ import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.UUID;
-
 import ru.iedt.authorization.models.UserInformation;
 import ru.iedt.database.request.controller.DatabaseController;
 import ru.iedt.database.request.controller.parameter.ParameterInput;
@@ -46,7 +45,7 @@ public class UserInfoRepository {
         parameters.put("USER_PHONE", new ParameterInput("USER_PHONE", userPhone));
         parameters.put("USER_OFFICE", new ParameterInput("USER_OFFICE", userOffice));
         return databaseController
-            .runningQuerySet("USERS_MODEL", "ADD_USERS_INFO", parameters, client)
+            .runningQuerySet("USERS", "ADD_USERS_INFO", parameters, client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()
@@ -59,7 +58,7 @@ public class UserInfoRepository {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_UUID", userId.toString()));
         return databaseController
-            .runningQuerySet("USERS_MODEL", "GET_USER_INFO", parameters, client)
+            .runningQuerySet("USERS", "GET_USER_INFO", parameters, client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()
@@ -70,7 +69,7 @@ public class UserInfoRepository {
 
     public Multi<UserInformation> getAllUserInfo(PgPool client) {
         return databaseController
-            .runningQuerySet("USERS_MODEL", "GET_USER_INFO", new HashMap<>(), client)
+            .runningQuerySet("USERS", "GET_USER_INFO", new HashMap<>(), client)
             .onItem()
             .transform(element -> element.get(0).get("main"))
             .onItem()

@@ -27,4 +27,3 @@ include 'source:modules:submodules:submodules-authorization'
 include ':source:modules:submodules:submodules-authorization:service'
 include ':source:modules:submodules:submodules-authorization:database'
 include ':source:modules:submodules:submodules-authorization:entity'
-

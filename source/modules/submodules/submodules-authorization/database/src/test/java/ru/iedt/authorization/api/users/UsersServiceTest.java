@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
-import ru.iedt.authorization.api.session.SessionControlRepository;
+import ru.iedt.authorization.api.repository.session.SessionControlRepository;
 import ru.iedt.authorization.crypto.SRP;
 import ru.iedt.authorization.models.UserAccount;
 import ru.iedt.authorization.models.UserInformation;
@@ -155,7 +155,8 @@ public class UsersServiceTest {
                 String authorizationKey = getRandomString(5);
                 String signature = getRandomString(5);
                 String ip = getRandomString(5);
-                return sessionControlRepository.addSession(sessionId, sessionKey, user.getAccountId(), serverPrivateKey, serverPublicKey, accountPublicKey, scrambler, authorizationKey, signature, ip, client);
+                UUID appId = UUID.fromString("d8bc7d5d-e8c5-4a6d-9aea-494f84d4f56a");
+                return sessionControlRepository.addSession(sessionId, sessionKey, user.getAccountId(), appId, serverPrivateKey, serverPublicKey, accountPublicKey, scrambler, authorizationKey, signature, ip, client);
             })
             .merge()
             .collect()

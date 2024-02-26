@@ -1,7 +1,6 @@
 package ru.iedt.authorization.models;
 
 import io.vertx.mutiny.sqlclient.Row;
-
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -75,33 +74,33 @@ public class UserInformation {
 
     public static UserInformation from(Row row) {
         return new UserInformation(
-                row.getUUID("account_id"),
-                row.getString("user_surname"),
-                row.getString("user_name"),
-                row.getString("user_patronymic"),
-                row.getLocalDate("user_date_of_birth"),
-                row.getInteger("user_personal_number"),
-                row.getInteger("user_structure"),
-                row.getUUID("user_current_post"),
-                row.getString("user_phone"),
-                row.getString("user_office")
+            row.getUUID("account_id"),
+            row.getString("user_surname"),
+            row.getString("user_name"),
+            row.getString("user_patronymic"),
+            row.getLocalDate("user_date_of_birth"),
+            row.getInteger("user_personal_number"),
+            row.getInteger("user_structure"),
+            row.getUUID("user_current_post"),
+            row.getString("user_phone"),
+            row.getString("user_office")
         );
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", UserInformation.class.getSimpleName() + "[", "]")
-                .add("account_id=" + account_id)
-                .add("user_surname='" + user_surname + "'")
-                .add("user_name='" + user_name + "'")
-                .add("user_patronymic='" + user_patronymic + "'")
-                .add("user_date_of_birth=" + user_date_of_birth)
-                .add("user_personal_number=" + user_personal_number)
-                .add("user_structure=" + user_structure)
-                .add("user_current_post=" + user_current_post)
-                .add("user_phone='" + user_phone + "'")
-                .add("user_office='" + user_office + "'")
-                .toString();
+            .add("account_id=" + account_id)
+            .add("user_surname='" + user_surname + "'")
+            .add("user_name='" + user_name + "'")
+            .add("user_patronymic='" + user_patronymic + "'")
+            .add("user_date_of_birth=" + user_date_of_birth)
+            .add("user_personal_number=" + user_personal_number)
+            .add("user_structure=" + user_structure)
+            .add("user_current_post=" + user_current_post)
+            .add("user_phone='" + user_phone + "'")
+            .add("user_office='" + user_office + "'")
+            .toString();
     }
 
     public void setUserSurname(String user_surname) {
@@ -154,7 +153,7 @@ public class UserInformation {
         if (!Objects.equals(user_name, that.user_name)) return false;
         if (!Objects.equals(user_patronymic, that.user_patronymic)) return false;
         if (!Objects.equals(user_date_of_birth, that.user_date_of_birth)) return false;
-        if (!Objects.equals(user_current_post, that.user_current_post))  return false;
+        if (!Objects.equals(user_current_post, that.user_current_post)) return false;
         if (!Objects.equals(user_phone, that.user_phone)) return false;
         return Objects.equals(user_office, that.user_office);
     }

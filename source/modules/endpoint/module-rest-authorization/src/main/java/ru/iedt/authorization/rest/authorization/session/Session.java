@@ -32,7 +32,7 @@ public class Session extends BaseRestController {
     @Operation(summary = "Создание сессии", description = "Генерация информации о сессии и получение данных")
     public Uni<ResultInformation> createSession(Initialization session, @RestHeader("X-Account-id") UUID accountId) {
         String ip = context.request().remoteAddress().hostAddress();
-        return this.sessionControlService.createSession(session.x_cord(), session.y_cord(), session.account_public_key(), accountId, this.fingerprint, ip);
+        return this.sessionControlService.createSession(session.x_cord(), session.y_cord(), session.account_public_key(), accountId, session.app_id(), this.fingerprint, ip);
     }
 
     @POST
@@ -44,6 +44,7 @@ public class Session extends BaseRestController {
         String ip = context.request().remoteAddress().hostAddress();
         return this.sessionControlService.confirmSession(session.session_id(), session.confirm(), this.fingerprint, ip);
     }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -60,8 +61,6 @@ public class Session extends BaseRestController {
     @Operation(summary = "Обновление токена сессии", description = "Обновление сессии через токен")
     public Uni<ResultConfirm> updateSession(Confirm session) {
         String ip = context.request().remoteAddress().hostAddress();
-        ip = context.request().remoteAddress().hostAddress();
-        ip = context.request().remoteAddress().hostAddress();
         return this.sessionControlService.confirmSession(session.session_id(), session.confirm(), this.fingerprint, ip);
     }
 }
