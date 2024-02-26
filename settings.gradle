@@ -20,9 +20,11 @@ sourceControl {
 
 rootProject.name = 'authorization-server-quarkus'
 //модули
-include ':source:modules:submodules:submodules-database-repository'
 include ':source:modules:submodules:submodules-cryptography'
-include ':source:modules:submodules:submodules-structures'
-include ':source:modules:submodules:submodules-authorization-service'
-include ':source:modules:module-rest-authorization-endpoint'
+include ':source:modules:endpoint:module-rest-authorization'
 include ':source:modules:exception'
+include 'source:modules:submodules:submodules-authorization'
+include ':source:modules:submodules:submodules-authorization:service'
+include ':source:modules:submodules:submodules-authorization:database'
+include ':source:modules:submodules:submodules-authorization:entity'
+
