@@ -13,7 +13,7 @@ public class UserAccountBlock {
         this.time_to_unlock = time_to_unlock;
     }
 
-    public boolean isIsBlock() {
+    public boolean isBlock() {
         return is_block;
     }
 
