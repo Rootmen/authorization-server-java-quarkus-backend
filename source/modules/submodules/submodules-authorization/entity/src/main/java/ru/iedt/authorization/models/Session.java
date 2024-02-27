@@ -1,7 +1,6 @@
 package ru.iedt.authorization.models;
 
 import io.vertx.mutiny.sqlclient.Row;
-
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -67,17 +66,17 @@ public class Session {
     }
 
     public Session(
-            String session_id,
-            BigInteger session_key,
-            LocalDateTime session_start,
-            UUID account_id,
-            UUID app_id,
-            BigInteger session_server_private_key,
-            BigInteger session_server_public_key,
-            BigInteger session_account_public_key,
-            BigInteger session_scrambler,
-            BigInteger session_authorization_key,
-            String session_signature
+        String session_id,
+        BigInteger session_key,
+        LocalDateTime session_start,
+        UUID account_id,
+        UUID app_id,
+        BigInteger session_server_private_key,
+        BigInteger session_server_public_key,
+        BigInteger session_account_public_key,
+        BigInteger session_scrambler,
+        BigInteger session_authorization_key,
+        String session_signature
     ) {
         this.session_id = session_id;
         this.session_key = session_key;
@@ -94,35 +93,35 @@ public class Session {
 
     public static Session from(Row row) {
         return new Session(
-                row.getString("session_id"),
-                new BigInteger(row.getString("session_key"), 16),
-                row.getLocalDateTime("session_start"),
-                row.getUUID("account_id"),
-                row.getUUID("app_id"),
-                new BigInteger(row.getString("session_server_private_key"), 16),
-                new BigInteger(row.getString("session_server_public_key"), 16),
-                new BigInteger(row.getString("session_account_public_key"), 16),
-                new BigInteger(row.getString("session_scrambler"), 16),
-                new BigInteger(row.getString("session_authorization_key"), 16),
-                row.getString("session_signature")
+            row.getString("session_id"),
+            new BigInteger(row.getString("session_key"), 16),
+            row.getLocalDateTime("session_start"),
+            row.getUUID("account_id"),
+            row.getUUID("app_id"),
+            new BigInteger(row.getString("session_server_private_key"), 16),
+            new BigInteger(row.getString("session_server_public_key"), 16),
+            new BigInteger(row.getString("session_account_public_key"), 16),
+            new BigInteger(row.getString("session_scrambler"), 16),
+            new BigInteger(row.getString("session_authorization_key"), 16),
+            row.getString("session_signature")
         );
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Session.class.getSimpleName() + "[", "]")
-                .add("session_id='" + session_id + "'")
-                .add("session_key=" + session_key)
-                .add("session_start=" + session_start)
-                .add("account_id=" + account_id)
-                .add("app_id=" + app_id)
-                .add("session_server_private_key=" + session_server_private_key)
-                .add("session_server_public_key=" + session_server_public_key)
-                .add("session_account_public_key=" + session_account_public_key)
-                .add("session_scrambler=" + session_scrambler)
-                .add("session_authorization_key=" + session_authorization_key)
-                .add("session_signature='" + session_signature + "'")
-                .toString();
+            .add("session_id='" + session_id + "'")
+            .add("session_key=" + session_key)
+            .add("session_start=" + session_start)
+            .add("account_id=" + account_id)
+            .add("app_id=" + app_id)
+            .add("session_server_private_key=" + session_server_private_key)
+            .add("session_server_public_key=" + session_server_public_key)
+            .add("session_account_public_key=" + session_account_public_key)
+            .add("session_scrambler=" + session_scrambler)
+            .add("session_authorization_key=" + session_authorization_key)
+            .add("session_signature='" + session_signature + "'")
+            .toString();
     }
 
     @Override
