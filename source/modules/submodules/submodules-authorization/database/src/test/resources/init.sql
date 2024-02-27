@@ -9,14 +9,14 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.APP_LIST
     APP_SECRET       TEXT NOT NULL,
     APP_TOKEN_SECRET TEXT NOT NULL,
     APP_IMAGE        TEXT NOT NULL,
-    REDIRECT_URL     TEXT NOT NULL
+    APP_REDIRECT_URL TEXT NOT NULL
 );
 -- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.APP_LIST И ЕЁ СТОЛБЦАМ
 COMMENT ON TABLE DNAUTHORIZATION.APP_LIST IS 'Таблица для списка приложений';
 COMMENT ON COLUMN DNAUTHORIZATION.APP_LIST.APP_ID IS 'Уникальный идентификатор приложения';
 COMMENT ON COLUMN DNAUTHORIZATION.APP_LIST.APP_SECRET IS 'Секрет приложения';
 COMMENT ON COLUMN DNAUTHORIZATION.APP_LIST.APP_TOKEN_SECRET IS 'Секрет используемый для jwt выданных этому приложению';
-COMMENT ON COLUMN DNAUTHORIZATION.APP_LIST.REDIRECT_URL IS 'Адрес редиректа на приложение';
+COMMENT ON COLUMN DNAUTHORIZATION.APP_LIST.APP_REDIRECT_URL IS 'Адрес редиректа на приложение';
 -- ТАБЛИЦА DNAUTHORIZATION.USERS_ACCOUNT
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USERS_ACCOUNT
 (
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACTIVE_SESSIONS
     SESSION_ID                 TEXT                                NOT NULL UNIQUE,
     SESSION_KEY                TEXT                                NOT NULL,
     SESSION_START              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    SESSION_ACCOUNT_ID         UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID),
-    SESSION_APP_ID             UUID REFERENCES DNAUTHORIZATION.APP_LIST (APP_ID),
+    ACCOUNT_ID                 UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID),
+    APP_ID                     UUID REFERENCES DNAUTHORIZATION.APP_LIST (APP_ID),
     SESSION_SERVER_PRIVATE_KEY TEXT,
     SESSION_SERVER_PUBLIC_KEY  TEXT,
     SESSION_ACCOUNT_PUBLIC_KEY TEXT,
@@ -92,7 +92,7 @@ COMMENT ON TABLE DNAUTHORIZATION.ACTIVE_SESSIONS IS 'таблица для от�
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ID IS 'уникальный идентификатор сеанса';
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_KEY IS 'ключ сеанса для аутентификации';
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_START IS 'дата и время начала сеанса';
-COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ACCOUNT_ID IS 'идентификатор учетной записи, связанной с сеансом (внешний ключ)';
+COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.ACCOUNT_ID IS 'идентификатор учетной записи, связанной с сеансом (внешний ключ)';
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_SERVER_PRIVATE_KEY IS 'закрытый ключ сервера, связанный с сеансом';
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_SERVER_PUBLIC_KEY IS 'публичный ключ сервера, связанный с сеансом';
 COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_ACCOUNT_PUBLIC_KEY IS 'публичный ключ учетной записи, связанный с сеансом';
@@ -105,38 +105,171 @@ COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_TOKEN IS 'Токен �
 -- ТАБЛИЦА DNAUTHORIZATION.REFRESH_TOKENS
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.REFRESH_TOKENS
 (
-    SESSION_ACCOUNT_ID           UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) NOT NULL,
-    SESSION_REFRESH_TOKENS       TEXT UNIQUE                                                NOT NULL,
-    SESSION_REFRESH_TOKENS_START TIMESTAMP DEFAULT CURRENT_TIMESTAMP                        NOT NULL
+    ACCOUNT_ID                UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) NOT NULL,
+    TOKEN_REFRESH             TEXT UNIQUE                                                NOT NULL,
+    TOKEN_REFRESH_CREATE_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP                        NOT NULL
 );
 -- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.REFRESH_TOKENS И ЕЁ СТОЛБЦАМ
 COMMENT ON TABLE DNAUTHORIZATION.REFRESH_TOKENS IS 'Таблица со списком долгоживущих токенов';
-COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.SESSION_ACCOUNT_ID IS 'Ид токена';
-COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.SESSION_REFRESH_TOKENS IS 'Токен обновления';
-COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.SESSION_REFRESH_TOKENS_START IS 'Дата выдача токена';
+COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.ACCOUNT_ID IS 'Ид токена';
+COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.TOKEN_REFRESH IS 'Токен обновления';
+COMMENT ON COLUMN DNAUTHORIZATION.REFRESH_TOKENS.TOKEN_REFRESH_CREATE_TIME IS 'Дата выдача токена';
 -- ТАБЛИЦА DNAUTHORIZATION.AUTHORIZATION_LOG
 CREATE TABLE DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT
 (
-    ACCOUNT_ID UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID),
-    APP_ID     UUID REFERENCES DNAUTHORIZATION.APP_LIST (APP_ID),
-    TIME       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    IP         TEXT,
-    SIGNATURE  TEXT,
-    SUCCESS    BOOLEAN
+    ACCOUNT_ID    UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID),
+    APP_ID        UUID REFERENCES DNAUTHORIZATION.APP_LIST (APP_ID),
+    LOG_TIME      TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    LOG_IP        TEXT,
+    LOG_SIGNATURE TEXT,
+    LOG_SUCCESS   BOOLEAN
 );
-COMMENT ON TABLE DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT IS 'Таблица с логом авторизаций';
-COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.ACCOUNT_ID IS 'Идентификатор пользователя';
-COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.APP_ID IS 'Идентификатор приложения';
-COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.TIME IS 'Время авторизации';
-COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.SIGNATURE IS 'Сигнатура пользователя';
-COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.SUCCESS IS 'Успешность авторизации';
+COMMENT ON TABLE DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT IS 'Таблица для записи попыток аутентификации и авторизации пользователей';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.ACCOUNT_ID IS 'Идентификатор учетной записи пользователя, совершившего попытку аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.APP_ID IS 'Идентификатор приложения, для которого выполняется попытка аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.LOG_TIME IS 'Дата и время совершения попытки аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.LOG_IP IS 'IP-адрес, с которого выполняется попытка аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.LOG_SIGNATURE IS 'Подпись или токен, связанный с попыткой аутентификации';
+COMMENT ON COLUMN DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT.LOG_SUCCESS IS 'Флаг, указывающий успешность попытки аутентификации (TRUE - успешно, FALSE - неудачно)';
+-- ТАБЛИЦА DNAUTHORIZATION.ROLE_LIST
+CREATE TABLE DNAUTHORIZATION.ROLE_LIST
+(
+    ROLE_UUID        UUID      DEFAULT GEN_RANDOM_UUID() PRIMARY KEY NOT NULL,
+    ROLE_NAME        TEXT                                            NOT NULL,
+    ROLE_DESCRIPTION TEXT,
+    APP_ID           UUID REFERENCES DNAUTHORIZATION.APP_LIST (APP_ID),
+    ROLE_CREATED_AT  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ROLE_UPDATED_AT  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ROLE_CREATED_BY  UUID,
+    ROLE_UPDATED_BY  UUID,
+    ROLE_IS_ACTIVE   BOOLEAN   DEFAULT TRUE,
+    ROLE_PERMISSIONS JSONB
+);
+COMMENT ON TABLE DNAUTHORIZATION.ROLE_LIST IS 'Таблица для хранения информации о ролях в системе авторизации';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_UUID IS 'Уникальный идентификатор роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_NAME IS 'Наименование роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_DESCRIPTION IS 'Описание роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.APP_ID IS 'Идентификатор приложения, связанного с ролью';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_CREATED_AT IS 'Дата и время создания записи о роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_UPDATED_AT IS 'Дата и время последнего обновления записи о роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_CREATED_BY IS 'Идентификатор создателя записи о роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_UPDATED_BY IS 'Идентификатор пользователя, который последний раз обновил запись о роли';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_IS_ACTIVE IS 'Флаг, указывающий, активна ли роль в данный момент';
+COMMENT ON COLUMN DNAUTHORIZATION.ROLE_LIST.ROLE_PERMISSIONS IS 'Список разрешений, связанных с данной ролью';
+-- Тригер на дату обновления
+CREATE OR REPLACE FUNCTION UPDATE_ROLE_UPDATED_AT()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.ROLE_UPDATED_AT = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+CREATE TRIGGER ROLE_LIST_UPDATED_AT_TRIGGER
+    BEFORE UPDATE
+    ON DNAUTHORIZATION.ROLE_LIST
+    FOR EACH ROW
+EXECUTE FUNCTION UPDATE_ROLE_UPDATED_AT();
+-- ТАБЛИЦА DNAUTHORIZATION.ROLE_LIST
+CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.USER_ROLE
+(
+    USER_ROLE_ID         UUID      DEFAULT GEN_RANDOM_UUID() PRIMARY KEY,
+    ACCOUNT_ID           UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) ON DELETE CASCADE,
+    ROLE_UUID            UUID REFERENCES DNAUTHORIZATION.ROLE_LIST (ROLE_UUID) ON DELETE CASCADE,
+    USER_ROLE_VALID_FROM TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Время начала действия разрешения
+    USER_ROLE_VALID_TO   TIMESTAMP,                           -- Время окончания действия разрешения
+    CONSTRAINT FK_USER_ROLE_ACCOUNT FOREIGN KEY (ACCOUNT_ID) REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) ON DELETE CASCADE,
+    CONSTRAINT FK_USER_ROLE_ROLE FOREIGN KEY (ROLE_UUID) REFERENCES DNAUTHORIZATION.ROLE_LIST (ROLE_UUID) ON DELETE CASCADE
+);
+COMMENT ON TABLE DNAUTHORIZATION.USER_ROLE IS 'Таблица для связи пользователей с их ролями в системе авторизации';
+COMMENT ON COLUMN DNAUTHORIZATION.USER_ROLE.USER_ROLE_ID IS 'Уникальный идентификатор связи между пользователем и ролью';
+COMMENT ON COLUMN DNAUTHORIZATION.USER_ROLE.ACCOUNT_ID IS 'Идентификатор пользователя, связанного с данной ролью';
+COMMENT ON COLUMN DNAUTHORIZATION.USER_ROLE.ROLE_UUID IS 'Идентификатор роли, связанной с пользователем';
+COMMENT ON COLUMN DNAUTHORIZATION.USER_ROLE.USER_ROLE_VALID_FROM IS 'Время начала действия разрешения';
+COMMENT ON COLUMN DNAUTHORIZATION.USER_ROLE.USER_ROLE_VALID_TO IS 'Время окончания действия разрешения';
+COMMENT ON CONSTRAINT FK_USER_ROLE_ACCOUNT ON DNAUTHORIZATION.USER_ROLE IS 'Внешний ключ, связывающий ACCOUNT_ID с таблицей USERS_ACCOUNT';
+COMMENT ON CONSTRAINT FK_USER_ROLE_ROLE ON DNAUTHORIZATION.USER_ROLE IS 'Внешний ключ, связывающий ROLE_UUID с таблицей ROLE_LIST';
+-- ТАБЛИЦА DNAUTHORIZATION.ACCESS_LOG
+CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACTION_TYPE_LOOKUP
+(
+    ACTION_TYPE_ID   smallint PRIMARY KEY,
+    ACTION_TYPE_NAME VARCHAR(20) UNIQUE NOT NULL
+);
 
-INSERT INTO DNAUTHORIZATION.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_IMAGE, REDIRECT_URL)
+-- Вставляем возможные значения типа действия
+INSERT INTO DNAUTHORIZATION.ACTION_TYPE_LOOKUP (ACTION_TYPE_ID, ACTION_TYPE_NAME)
+VALUES (1, 'Grant'),
+       (2, 'Change'),
+       (3, 'Revoke');
+-- ТАБЛИЦА DNAUTHORIZATION.ACCESS_LOG
+CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.ACCESS_LOG
+(
+    ACCESS_LOG_ID        BIGSERIAL PRIMARY KEY,
+    ACTION_TYPE_ID       INT REFERENCES DNAUTHORIZATION.ACTION_TYPE_LOOKUP (ACTION_TYPE_ID),
+    ACCESS_LOG_TIMESTAMP TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    ACCOUNT_ID           UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) ON DELETE CASCADE,
+    ROLE_UUID            UUID REFERENCES DNAUTHORIZATION.ROLE_LIST (ROLE_UUID) ON DELETE CASCADE
+);
+COMMENT ON TABLE DNAUTHORIZATION.ACCESS_LOG IS 'Таблица для записи журнала доступа, отслеживающая действия с правами доступа';
+COMMENT ON COLUMN DNAUTHORIZATION.ACCESS_LOG.ACCESS_LOG_ID IS 'Уникальный идентификатор записи в журнале доступа';
+COMMENT ON COLUMN DNAUTHORIZATION.ACCESS_LOG.ACTION_TYPE_ID IS 'Идентификатор типа действия (связь с таблицей ACTION_TYPE_LOOKUP)';
+COMMENT ON COLUMN DNAUTHORIZATION.ACCESS_LOG.ACCESS_LOG_TIMESTAMP IS 'Временная метка совершения действия в журнале доступа';
+COMMENT ON COLUMN DNAUTHORIZATION.ACCESS_LOG.ACCOUNT_ID IS 'Идентификатор пользователя, связанного с действием в журнале доступа';
+COMMENT ON COLUMN DNAUTHORIZATION.ACCESS_LOG.ROLE_UUID IS 'Идентификатор роли, связанной с действием в журнале доступа';
+-- Триггер для логирования выдачи прав доступа
+CREATE OR REPLACE FUNCTION log_access_grant()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    INSERT INTO DNAUTHORIZATION.ACCESS_LOG (ACTION_TYPE_ID, ACCESS_LOG_TIMESTAMP, ACCOUNT_ID, ROLE_UUID)
+    VALUES (1, CURRENT_TIMESTAMP, NEW.ACCOUNT_ID, NEW.ROLE_UUID); -- Предположим, что тип действия "выдача" имеет ID = 1
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER grant_access_trigger
+    AFTER INSERT
+    ON DNAUTHORIZATION.USER_ROLE
+    FOR EACH ROW
+EXECUTE FUNCTION log_access_grant();
+CREATE OR REPLACE FUNCTION log_access_change()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    INSERT INTO DNAUTHORIZATION.ACCESS_LOG (ACTION_TYPE_ID, ACCESS_LOG_TIMESTAMP, ACCOUNT_ID, ROLE_UUID)
+    VALUES (2, CURRENT_TIMESTAMP, NEW.ACCOUNT_ID,
+            NEW.ROLE_UUID); -- Предположим, что тип действия "изменение" имеет ID = 2
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER change_access_trigger
+    AFTER UPDATE
+    ON DNAUTHORIZATION.USER_ROLE
+    FOR EACH ROW
+EXECUTE FUNCTION log_access_change();
+CREATE OR REPLACE FUNCTION log_access_revoke()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    INSERT INTO DNAUTHORIZATION.ACCESS_LOG (ACTION_TYPE_ID, ACCESS_LOG_TIMESTAMP, ACCOUNT_ID, ROLE_UUID)
+    VALUES (3, CURRENT_TIMESTAMP, OLD.ACCOUNT_ID, OLD.ROLE_UUID); -- Предположим, что тип действия "отзыв" имеет ID = 3
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER revoke_access_trigger
+    AFTER DELETE
+    ON DNAUTHORIZATION.USER_ROLE
+    FOR EACH ROW
+EXECUTE FUNCTION log_access_revoke();
+
+INSERT INTO DNAUTHORIZATION.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_IMAGE, APP_REDIRECT_URL)
 VALUES ('a1e6da0a-9d3d-4e3c-8388-49abc5183c97', 'EDOX1', '123', '1234',
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACFklEQVR42r1TzUoCURS+j+AjDOTcubrqEQYlaClGbSKQIIjUGmgf2ipo4zYIlPEB6g18hB5h6I9AjKkgpNG4nbMY7uBVT8Md/eCDwTnnfGe+78jmIXCFG5R5haWH+bxgW1hP5YJEvrnCIsqzn/dYLvTihsdSwWOGwBlqXrFFNkBhEDcAB8wQOCMxL6SKK1iYZOBaOXP7FfEe/mV/FjE8lURNzVKu0tvqDeb2K4boKrGtHoOh/bSreHxEg4H9hKsvW/YmviAaDO3Xj1E7vuUsdtOQmgeaHdr+7Kkf47Aiaq/bYt3i8nlLyGFV1Ni0ye+AcnzkyNGOWLno+56Q34eORM1Jk9/jAiFQxvw55itZBJzG2aiRZMjwYR4/9h3YOJuv/joQcpGO5sCsGwb3gb36V+sO2IMlBTI64fJ9N/0S2BPVl4gjG/aATRq8pb0gIqEs/9wX2EMRFnQ8Jj0rp8VAR0JbTjOQx5bFEFE971ENKpL5/5JRVbOc/voE9CjoSFJarohabB6ipl1TcdD8OeNy3OBpxEPUYMsw9oSF+ZDDLoFdYA/YpsV/T+2HOHMCcSR2Z9ENTK+B/RleLRbHWXjslCYdyTnwRolqvMWaNJYr0JFcoOWxGLFEW7PcHJO+3YlFKEKtsjxLRD5E4vNwkTC+wxq2Soy7wgKhYFb81wfLu2D5OgBCuWQk+Iy/sXVj6m9UJv28ywzwBzxk2ACtcnlEAAAAAElFTkSuQmCC',
         'http://gitlab.iedt.com.rzd/');
 
-INSERT INTO DNAUTHORIZATION.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_IMAGE, REDIRECT_URL)
+INSERT INTO DNAUTHORIZATION.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_IMAGE, APP_REDIRECT_URL)
 VALUES ('d8bc7d5d-e8c5-4a6d-9aea-494f84d4f56a', 'EDOX2', '123', '1234',
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACFklEQVR42r1TzUoCURS+j+AjDOTcubrqEQYlaClGbSKQIIjUGmgf2ipo4zYIlPEB6g18hB5h6I9AjKkgpNG4nbMY7uBVT8Md/eCDwTnnfGe+78jmIXCFG5R5haWH+bxgW1hP5YJEvrnCIsqzn/dYLvTihsdSwWOGwBlqXrFFNkBhEDcAB8wQOCMxL6SKK1iYZOBaOXP7FfEe/mV/FjE8lURNzVKu0tvqDeb2K4boKrGtHoOh/bSreHxEg4H9hKsvW/YmviAaDO3Xj1E7vuUsdtOQmgeaHdr+7Kkf47Aiaq/bYt3i8nlLyGFV1Ni0ye+AcnzkyNGOWLno+56Q34eORM1Jk9/jAiFQxvw55itZBJzG2aiRZMjwYR4/9h3YOJuv/joQcpGO5sCsGwb3gb36V+sO2IMlBTI64fJ9N/0S2BPVl4gjG/aATRq8pb0gIqEs/9wX2EMRFnQ8Jj0rp8VAR0JbTjOQx5bFEFE971ENKpL5/5JRVbOc/voE9CjoSFJarohabB6ipl1TcdD8OeNy3OBpxEPUYMsw9oSF+ZDDLoFdYA/YpsV/T+2HOHMCcSR2Z9ENTK+B/RleLRbHWXjslCYdyTnwRolqvMWaNJYr0JFcoOWxGLFEW7PcHJO+3YlFKEKtsjxLRD5E4vNwkTC+wxq2Soy7wgKhYFb81wfLu2D5OgBCuWQk+Iy/sXVj6m9UJv28ywzwBzxk2ACtcnlEAAAAAElFTkSuQmCC',
         'https://www.google.com/');

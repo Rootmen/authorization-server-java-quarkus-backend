@@ -180,16 +180,16 @@
                     WITH USERS_ACCOUNT AS (SELECT *
                                            FROM DNAUTHORIZATION.USERS_ACCOUNT AS USERS_ACCOUNT
                                            WHERE ACCOUNT_ID = $ACCOUNT_UUID$),
-                         LOG_LIST AS (SELECT ACCOUNT_ID, APP_ID, TIME, IP, SIGNATURE, SUCCESS
+                         LOG_LIST AS (SELECT ACCOUNT_ID, APP_ID, LOG_TIME, LOG_IP, LOG_SIGNATURE, LOG_SUCCESS
                                       FROM DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT AS LOG
                                       WHERE ACCOUNT_ID = $ACCOUNT_UUID$
-                                        AND TIME BETWEEN CURRENT_TIMESTAMP - ((SELECT USERS_ACCOUNT.ACCOUNT_LOCK_TIME
+                                        AND LOG_TIME BETWEEN CURRENT_TIMESTAMP - ((SELECT USERS_ACCOUNT.ACCOUNT_LOCK_TIME
                                                                                FROM USERS_ACCOUNT) ||
                                                                               ' MINUTES')::INTERVAL
                                           AND CURRENT_TIMESTAMP
-                                        AND SUCCESS = FALSE
-                                        AND IP = $ACCOUNT_IP$)
-                    SELECT COALESCE(USERS_ACCOUNT.ACCOUNT_LOCK_TIME - (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - (SELECT MIN(LOG_LIST.TIME) FROM LOG_LIST)) / 60)::INT, 0)                                                        AS TIME_TO_UNLOCK,
+                                        AND LOG_SUCCESS = FALSE
+                                        AND LOG_IP = $ACCOUNT_IP$)
+                    SELECT COALESCE(USERS_ACCOUNT.ACCOUNT_LOCK_TIME - (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - (SELECT MIN(LOG_LIST.LOG_TIME) FROM LOG_LIST)) / 60)::INT, 0)                                                        AS TIME_TO_UNLOCK,
                            (SELECT COUNT(*) FROM LOG_LIST) > USERS_ACCOUNT.ACCOUNT_LOCK_COUNT AS IS_BLOCK
                     FROM USERS_ACCOUNT;
                 ]]>

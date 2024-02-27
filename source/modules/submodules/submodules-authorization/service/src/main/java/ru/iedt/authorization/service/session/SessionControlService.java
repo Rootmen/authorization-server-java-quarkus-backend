@@ -74,8 +74,8 @@ public class SessionControlService {
                 .onItem()
                 .transformToUni(
                         session -> {
-                            Uni<UserAccount> userAccountUni = getUserAccount(session.getSessionAccountId());
-                            Uni<Void> isBlockUni = checkUserIsBlock(session.getSessionAccountId(), ip);
+                            Uni<UserAccount> userAccountUni = getUserAccount(session.getAccountId());
+                            Uni<Void> isBlockUni = checkUserIsBlock(session.getAccountId(), ip);
                             return Uni
                                     .combine()
                                     .all()
@@ -137,7 +137,7 @@ public class SessionControlService {
 
     private void authorizationLog(Session session, String ip, String signature, boolean success) {
         sessionControlRepository
-                .authorizationAttempt(session.getSessionAccountId(), session.getSessionAppId(), ip, signature, success, this.client)
+                .authorizationAttempt(session.getAccountId(), session.getAppId(), ip, signature, success, this.client)
                 .replaceWithVoid()
                 .subscribe()
                 .with(unused -> {

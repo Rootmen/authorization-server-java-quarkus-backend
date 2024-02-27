@@ -6,29 +6,29 @@ import java.util.UUID;
 
 public class RefreshToken {
 
-    private final UUID session_account_id;
-    private final String session_refresh_tokens;
-    private final LocalDateTime session_refresh_tokens_start;
+    private final UUID account_id;
+    private final String token_refresh;
+    private final LocalDateTime token_refresh_create_time;
 
-    public RefreshToken(UUID session_account_id, String session_refresh_tokens, LocalDateTime session_refresh_tokens_start) {
-        this.session_account_id = session_account_id;
-        this.session_refresh_tokens = session_refresh_tokens;
-        this.session_refresh_tokens_start = session_refresh_tokens_start;
+    public RefreshToken(UUID account_id, String token_refresh, LocalDateTime token_refresh_create_time) {
+        this.account_id = account_id;
+        this.token_refresh = token_refresh;
+        this.token_refresh_create_time = token_refresh_create_time;
     }
 
-    public UUID getSessionAccountId() {
-        return session_account_id;
+    public UUID getAccountId() {
+        return account_id;
     }
 
-    public String getSessionUpdateToken() {
-        return session_refresh_tokens;
+    public String getTokenRefresh() {
+        return token_refresh;
     }
 
-    public LocalDateTime getSessionUpdateTokenStart() {
-        return session_refresh_tokens_start;
+    public LocalDateTime getTokenCreateTime() {
+        return token_refresh_create_time;
     }
 
     public static RefreshToken from(Row row) {
-        return new RefreshToken(row.getUUID("session_account_id"), row.getString("session_refresh_tokens"), row.getLocalDateTime("session_refresh_tokens_start"));
+        return new RefreshToken(row.getUUID("account_id"), row.getString("token_refresh"), row.getLocalDateTime("token_refresh_create_time"));
     }
 }
