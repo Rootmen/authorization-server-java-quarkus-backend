@@ -168,7 +168,6 @@
             </SQL>
         </Query>
     </QuerySet>
-
     <QuerySet ID="CHECK_ACCOUNT_IS_BLOCK">
         <Parameters>
             <Parameter name="ACCOUNT_UUID" type="uuid"/>
@@ -192,6 +191,21 @@
                     SELECT COALESCE(USERS_ACCOUNT.ACCOUNT_LOCK_TIME - (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - (SELECT MIN(LOG_LIST.LOG_TIME) FROM LOG_LIST)) / 60)::INT, 0)                                                        AS TIME_TO_UNLOCK,
                            (SELECT COUNT(*) FROM LOG_LIST) > USERS_ACCOUNT.ACCOUNT_LOCK_COUNT AS IS_BLOCK
                     FROM USERS_ACCOUNT;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="GET_ACCOUNT_GRANT_ROLE">
+        <Parameters>
+            <Parameter name="ACCOUNT_UUID" type="uuid"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    SELECT ROLE_UUID
+                    FROM DNAUTHORIZATION.USER_ROLE
+                    WHERE ACCOUNT_ID = $ACCOUNT_UUID$
+                      AND CURRENT_TIMESTAMP BETWEEN USER_ROLE_VALID_FROM AND USER_ROLE_VALID_TO;
                 ]]>
             </SQL>
         </Query>

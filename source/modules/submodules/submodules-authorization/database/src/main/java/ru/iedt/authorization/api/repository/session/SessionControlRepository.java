@@ -79,6 +79,13 @@ public class SessionControlRepository {
             .transform(iterator -> iterator.hasNext() ? Session.from(iterator.next()) : null);
     }
 
+    public Uni<Void> updateSessionInformation(String sessionId, String sessionToken, PgPool client) {
+        HashMap<String, ParameterInput> parameters = new HashMap<>();
+        parameters.put("SESSION_ID", new ParameterInput("SESSION_ID", sessionId));
+        parameters.put("SESSION_TOKEN", new ParameterInput("SESSION_TOKEN", sessionToken));
+        return databaseController.runningQuerySet("SESSION_CONTROL", "UPDATE_SESSION_INFORMATION", parameters, client).replaceWithVoid();
+    }
+
     public Uni<Session> removeOutdatedSession(PgPool client) {
         return databaseController
             .runningQuerySet("SESSION_CONTROL", "REMOVE_OLD_ACTIVE_SESSION", new HashMap<>(), client)

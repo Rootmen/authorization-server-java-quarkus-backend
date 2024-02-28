@@ -6,8 +6,7 @@ import io.vertx.mutiny.pgclient.PgPool;
 import io.vertx.mutiny.sqlclient.RowSet;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import ru.iedt.authorization.models.UserAccount;
 import ru.iedt.authorization.models.UserAccountBlock;
 import ru.iedt.database.request.controller.DatabaseController;
@@ -92,7 +91,7 @@ public class UserAccountRepository {
 
     public Uni<UserAccountBlock> accountIsBlock(UUID accountId, String ip, PgPool client) {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
-        parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_NAME", accountId.toString()));
+        parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_UUID", accountId.toString()));
         parameters.put("ACCOUNT_IP", new ParameterInput("ACCOUNT_IP", ip));
         return databaseController
             .runningQuerySet("USERS", "CHECK_ACCOUNT_IS_BLOCK", parameters, client)
@@ -102,5 +101,20 @@ public class UserAccountRepository {
             .transform(RowSet::iterator)
             .onItem()
             .transform(iterator -> iterator.hasNext() ? UserAccountBlock.from(iterator.next()) : null);
+    }
+
+    public Uni<List<String>> getUserRole(UUID accountId, PgPool client) {
+        HashMap<String, ParameterInput> parameters = new HashMap<>();
+        parameters.put("ACCOUNT_UUID", new ParameterInput("ACCOUNT_UUID", accountId.toString()));
+        return databaseController
+            .runningQuerySet("USERS", "GET_ACCOUNT_GRANT_ROLE", parameters, client)
+            .onItem()
+            .transform(element -> element.get(0).get("main"))
+            .onItem()
+            .transformToMulti(set -> Multi.createFrom().iterable(set))
+            .onItem()
+            .transform(row -> row.getString("role_uuid"))
+            .collect()
+            .asList();
     }
 }

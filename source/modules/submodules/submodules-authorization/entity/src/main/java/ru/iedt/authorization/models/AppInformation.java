@@ -10,15 +10,15 @@ public class AppInformation {
     private final String app_name;
     private final String app_secret;
     private final String app_token_secret;
-    private final String redirect_url;
+    private final String app_redirect_url;
     private final String app_image;
 
-    public AppInformation(UUID app_id, String app_name, String app_secret, String app_token_secret, String redirect_url, String app_image) {
+    public AppInformation(UUID app_id, String app_name, String app_secret, String app_token_secret, String app_redirect_url, String app_image) {
         this.app_id = app_id;
         this.app_name = app_name;
         this.app_secret = app_secret;
         this.app_token_secret = app_token_secret;
-        this.redirect_url = redirect_url;
+        this.app_redirect_url = app_redirect_url;
         this.app_image = app_image;
     }
 
@@ -39,7 +39,7 @@ public class AppInformation {
     }
 
     public String getRedirectUrl() {
-        return redirect_url;
+        return app_redirect_url;
     }
 
     public String getAppImage() {
@@ -57,7 +57,7 @@ public class AppInformation {
         if (!Objects.equals(app_name, that.app_name)) return false;
         if (!Objects.equals(app_secret, that.app_secret)) return false;
         if (!Objects.equals(app_token_secret, that.app_token_secret)) return false;
-        if (!Objects.equals(redirect_url, that.redirect_url)) return false;
+        if (!Objects.equals(app_redirect_url, that.app_redirect_url)) return false;
         return Objects.equals(app_image, that.app_image);
     }
 
@@ -67,12 +67,12 @@ public class AppInformation {
         result = 31 * result + (app_name != null ? app_name.hashCode() : 0);
         result = 31 * result + (app_secret != null ? app_secret.hashCode() : 0);
         result = 31 * result + (app_token_secret != null ? app_token_secret.hashCode() : 0);
-        result = 31 * result + (redirect_url != null ? redirect_url.hashCode() : 0);
+        result = 31 * result + (app_redirect_url != null ? app_redirect_url.hashCode() : 0);
         result = 31 * result + (app_image != null ? app_image.hashCode() : 0);
         return result;
     }
 
     public static AppInformation from(Row row) {
-        return new AppInformation(row.getUUID("app_id"), row.getString("app_name"), row.getString("app_secret"), row.getString("app_token_secret"), row.getString("redirect_url"), row.getString("app_image"));
+        return new AppInformation(row.getUUID("app_id"), row.getString("app_name"), row.getString("app_secret"), row.getString("app_token_secret"), row.getString("app_redirect_url"), row.getString("app_image"));
     }
 }

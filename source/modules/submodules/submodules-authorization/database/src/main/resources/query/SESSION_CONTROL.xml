@@ -19,7 +19,7 @@
                             SESSION_SIGNATURE,
                             SESSION_LAST_ACTIVITY,
                             SESSION_CONFIRM,
-                            SESSION_TOKEN,
+                            SESSION_TOKEN
                      FROM DNAUTHORIZATION.ACTIVE_SESSIONS]]>
         </Template>
         <Template ID="SELECT_REFRESH_TOKEN">
@@ -87,6 +87,24 @@
                             $SESSION_IP_ADDRESS$,
                             $SESSION_SIGNATURE$)
                     RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="UPDATE_SESSION_INFORMATION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string"/>
+            <Parameter name="SESSION_CONFIRM" type="string"/>
+            <Parameter name="SESSION_TOKEN" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    UPDATE DNAUTHORIZATION.ACTIVE_SESSIONS
+                    SET SESSION_CONFIRM = true,
+                        SESSION_TOKEN = $SESSION_TOKEN$,
+                        SESSION_LAST_ACTIVITY = CURRENT_TIMESTAMP
+                    WHERE SESSION_ID = $SESSION_ID$;
                 ]]>
             </SQL>
         </Query>

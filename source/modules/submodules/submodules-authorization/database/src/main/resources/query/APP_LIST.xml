@@ -5,7 +5,7 @@
             <![CDATA[DNAUTHORIZATION]]>
         </Template>
         <Template ID="SELECT_APP_LIST">
-            <![CDATA[SELECT APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, REDIRECT_URL, APP_IMAGE
+            <![CDATA[SELECT APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_REDIRECT_URL, APP_IMAGE
                         FROM DNAUTHORIZATION.APP_LIST]]>
         </Template>
     </Templates>
@@ -36,13 +36,13 @@
             <Parameter name="APP_SECRET" type="string"/>
             <Parameter name="APP_TOKEN_SECRET" type="string"/>
             <Parameter name="APP_IMAGE" type="string"/>
-            <Parameter name="REDIRECT_URL" type="string"/>
+            <Parameter name="APP_REDIRECT_URL" type="string"/>
         </Parameters>
         <Query>
             <SQL name="main">
                 <![CDATA[
-                INSERT INTO $REF_SQL=SCHEMA_NAME$.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, REDIRECT_URL, APP_IMAGE) VALUES (
-                    $APP_ID$, $APP_NAME$, $APP_SECRET$, $APP_TOKEN_SECRET$, $REDIRECT_URL$, $APP_IMAGE$
+                INSERT INTO $REF_SQL=SCHEMA_NAME$.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_REDIRECT_URL, APP_IMAGE) VALUES (
+                    $APP_ID$, $APP_NAME$, $APP_SECRET$, $APP_TOKEN_SECRET$, $APP_REDIRECT_URL$, $APP_IMAGE$
                 );
                 ]]>
             </SQL>
@@ -54,7 +54,7 @@
             <Parameter name="APP_NAME" type="string"/>
             <Parameter name="APP_SECRET" type="string"/>
             <Parameter name="APP_TOKEN_SECRET" type="string"/>
-            <Parameter name="REDIRECT_URL" type="string"/>
+            <Parameter name="APP_REDIRECT_URL" type="string"/>
         </Parameters>
         <Query>
             <SQL name="main">
@@ -63,7 +63,7 @@
                 SET APP_NAME            = $APP_NAME$,
                     APP_SECRET          = $APP_SECRET$,
                     APP_TOKEN_SECRET    = $APP_TOKEN_SECRET$,
-                    REDIRECT_URL        = $REDIRECT_URL$
+                    APP_REDIRECT_URL    = $APP_REDIRECT_URL$
                 WHERE APP_ID = $APP_ID$
                 RETURNING *;
                 ]]>

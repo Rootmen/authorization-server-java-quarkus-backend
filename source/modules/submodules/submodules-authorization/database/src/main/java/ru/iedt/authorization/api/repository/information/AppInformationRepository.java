@@ -55,13 +55,13 @@ public class AppInformationRepository {
             .transform(iterator -> iterator.hasNext() ? AppInformation.from(iterator.next()) : null);
     }
 
-    public Uni<AppInformation> addAppInfo(String appName, String appSecret, String appTokenSecret, String redirectUrl, String appImage, PgPool client) {
+    public Uni<AppInformation> addAppInfo(String appName, String appSecret, String appTokenSecret, String appRedirectUrl, String appImage, PgPool client) {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
         parameters.put("APP_NAME", new ParameterInput("APP_NAME", appName));
         parameters.put("APP_SECRET", new ParameterInput("APP_SECRET", appSecret));
         parameters.put("APP_TOKEN_SECRET", new ParameterInput("APP_TOKEN_SECRET", appTokenSecret));
         parameters.put("APP_IMAGE", new ParameterInput("APP_IMAGE", appImage));
-        parameters.put("REDIRECT_URL", new ParameterInput("REDIRECT_URL", redirectUrl));
+        parameters.put("APP_REDIRECT_URL", new ParameterInput("APP_REDIRECT_URL", appRedirectUrl));
         return databaseController
             .runningQuerySet("APP_LIST", "ADD_APP_LIST", parameters, client)
             .onItem()
