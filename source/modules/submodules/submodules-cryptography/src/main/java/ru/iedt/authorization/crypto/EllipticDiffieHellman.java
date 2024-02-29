@@ -142,9 +142,9 @@ public class EllipticDiffieHellman {
         }
 
         /**
-         * Функция удвоения точки, аналогична вычислению {@link ECDHPoint#multiply(BigInteger)} с значением USERS_MODEL.xml
+         * Функция удвоения точки, аналогична вычислению {@link ECDHPoint#multiply(BigInteger)} со значением
          *
-         * @return ECDHPoint * USERS_MODEL.xml
+         * @return ECDHPoint
          */
         public ECDHPoint twice() {
             BigInteger localX, localY, localZ, three = new BigInteger("3"), yz = this.y.multiply(this.z), yz2 = yz.multiply(this.y).mod(this.q), w = this.x.pow(2).multiply(three);

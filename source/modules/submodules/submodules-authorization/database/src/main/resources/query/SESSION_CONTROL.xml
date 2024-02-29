@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Definition parser="v3">
+    <Templates>
+        <Template ID="SCHEMA_NAME">
+            <![CDATA[DNAUTHORIZATION]]>
+        </Template>
+        <Template ID="SELECT_ACTIVE_SESSION">
+            <![CDATA[SELECT SESSION_ID,
+                            SESSION_KEY,
+                            SESSION_START,
+                            ACCOUNT_ID,
+                            APP_ID,
+                            SESSION_SERVER_PRIVATE_KEY,
+                            SESSION_SERVER_PUBLIC_KEY,
+                            SESSION_ACCOUNT_PUBLIC_KEY,
+                            SESSION_SCRAMBLER,
+                            SESSION_AUTHORIZATION_KEY,
+                            SESSION_IP_ADDRESS,
+                            SESSION_SIGNATURE,
+                            SESSION_LAST_ACTIVITY,
+                            SESSION_CONFIRM,
+                            SESSION_TOKEN
+                     FROM DNAUTHORIZATION.ACTIVE_SESSIONS]]>
+        </Template>
+        <Template ID="SELECT_REFRESH_TOKEN">
+            <![CDATA[SELECT ACCOUNT_ID, TOKEN_REFRESH, TOKEN_REFRESH_CREATE_TIME, TOKEN_IP, TOKEN_SIGNATURE
+                        FROM DNAUTHORIZATION.REFRESH_TOKENS;]]>
+        </Template>
+    </Templates>
+    <QuerySet ID="GET_ACTIVE_SESSION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND SESSION_ID = $SESSION_ID$]]></Otherwise>
+            </Parameter>
+            <Parameter name="SESSION_ACCOUNT_ID" type="uuid">
+                <When value="null"/>
+                <Otherwise><![CDATA[AND SESSION_ACCOUNT_ID = $SESSION_ACCOUNT_ID$]]></Otherwise>
+            </Parameter>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    $REF_SQL=SELECT_ACTIVE_SESSION$
+                    WHERE TRUE $SESSION_ID$ $SESSION_ACCOUNT_ID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_ACTIVE_SESSION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string"/>
+            <Parameter name="SESSION_KEY" type="string"/>
+            <Parameter name="SESSION_ACCOUNT_ID" type="uuid"/>
+            <Parameter name="SESSION_APP_ID" type="uuid"/>
+            <Parameter name="SESSION_SERVER_PRIVATE_KEY" type="string"/>
+            <Parameter name="SESSION_SERVER_PUBLIC_KEY" type="string"/>
+            <Parameter name="SESSION_ACCOUNT_PUBLIC_KEY" type="string"/>
+            <Parameter name="SESSION_SCRAMBLER" type="string"/>
+            <Parameter name="SESSION_AUTHORIZATION_KEY" type="string"/>
+            <Parameter name="SESSION_SIGNATURE" type="string"/>
+            <Parameter name="SESSION_IP_ADDRESS" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO DNAUTHORIZATION.ACTIVE_SESSIONS(SESSION_ID,
+                                                                SESSION_KEY,
+                                                                ACCOUNT_ID,
+                                                                APP_ID,
+                                                                SESSION_SERVER_PRIVATE_KEY,
+                                                                SESSION_SERVER_PUBLIC_KEY,
+                                                                SESSION_ACCOUNT_PUBLIC_KEY,
+                                                                SESSION_SCRAMBLER,
+                                                                SESSION_AUTHORIZATION_KEY,
+                                                                SESSION_IP_ADDRESS,
+                                                                SESSION_SIGNATURE)
+                    VALUES ($SESSION_ID$,
+                            $SESSION_KEY$,
+                            $SESSION_ACCOUNT_ID$,
+                            $SESSION_APP_ID$,
+                            $SESSION_SERVER_PRIVATE_KEY$,
+                            $SESSION_SERVER_PUBLIC_KEY$,
+                            $SESSION_ACCOUNT_PUBLIC_KEY$,
+                            $SESSION_SCRAMBLER$,
+                            $SESSION_AUTHORIZATION_KEY$,
+                            $SESSION_IP_ADDRESS$,
+                            $SESSION_SIGNATURE$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="UPDATE_SESSION_INFORMATION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string"/>
+            <Parameter name="SESSION_CONFIRM" type="string"/>
+            <Parameter name="SESSION_TOKEN" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    UPDATE DNAUTHORIZATION.ACTIVE_SESSIONS
+                    SET SESSION_CONFIRM = true,
+                        SESSION_TOKEN = $SESSION_TOKEN$,
+                        SESSION_LAST_ACTIVITY = CURRENT_TIMESTAMP
+                    WHERE SESSION_ID = $SESSION_ID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="GET_REFRESH_TOKEN">
+        <Parameters>
+            <Parameter name="SESSION_REFRESH_TOKENS" type="string">
+                <When value="null"/>
+                <Otherwise><![CDATA[WHERE SESSION_REFRESH_TOKENS = $SESSION_REFRESH_TOKENS$]]></Otherwise>
+            </Parameter>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    $REF_SQL=SELECT_REFRESH_TOKEN$
+                    $SESSION_REFRESH_TOKENS$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_AUTHORIZATION_ATTEMPT">
+        <Parameters>
+            <Parameter name="ATTEMPT_ACCOUNT_ID" type="uuid"/>
+            <Parameter name="ATTEMPT_APP_ID" type="uuid"/>
+            <Parameter name="ATTEMPT_IP" type="string"/>
+            <Parameter name="ATTEMPT_SIGNATURE" type="string"/>
+            <Parameter name="ATTEMPT_SUCCESS" type="boolean"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT(ACCOUNT_ID, APP_ID, LOG_IP, LOG_SIGNATURE, LOG_SUCCESS)
+                    VALUES ($ATTEMPT_ACCOUNT_ID$, $ATTEMPT_APP_ID$, $ATTEMPT_IP$, $ATTEMPT_SIGNATURE$, $ATTEMPT_SUCCESS$);
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="ADD_REFRESH_TOKEN">
+        <Parameters>
+            <Parameter name="ACCOUNT_ID" type="uuid"/>
+            <Parameter name="SESSION_ID" type="string"/>
+            <Parameter name="TOKEN_REFRESH" type="string"/>
+            <Parameter name="TOKEN_IP" type="string"/>
+            <Parameter name="TOKEN_SIGNATURE" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    INSERT INTO  DNAUTHORIZATION.REFRESH_TOKENS(ACCOUNT_ID, SESSION_ID, TOKEN_REFRESH, TOKEN_IP, TOKEN_SIGNATURE)
+                    VALUES ($ACCOUNT_ID$, $SESSION_ID$, $TOKEN_REFRESH$, $TOKEN_IP$, $TOKEN_SIGNATURE$)
+                    RETURNING *;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="DELETE_REFRESH_TOKEN">
+        <Parameters>
+            <Parameter name="TOKEN_REFRESH" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    DELETE
+                    FROM DNAUTHORIZATION.REFRESH_TOKENS
+                    WHERE TOKEN_REFRESH = $TOKEN_REFRESH$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="DELETE_SESSION">
+        <Parameters>
+            <Parameter name="SESSION_ID" type="string"/>
+        </Parameters>
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    DELETE
+                    FROM DNAUTHORIZATION.ACTIVE_SESSIONS
+                    WHERE SESSION_ID = $SESSION_ID$;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+    <QuerySet ID="REMOVE_OLD_ACTIVE_SESSION">
+        <Query>
+            <SQL name="main">
+                <![CDATA[
+                    DELETE
+                    FROM DNAUTHORIZATION.REFRESH_TOKENS
+                    WHERE TOKEN_REFRESH_CREATE_TIME < (CURRENT_TIMESTAMP - '30 DAY'::INTERVAL);
+                ]]>
+            </SQL>
+            <SQL name="main">
+                <![CDATA[
+                    DELETE
+                    FROM DNAUTHORIZATION.ACTIVE_SESSIONS AS ACTIVE_SESSIONS
+                    WHERE SESSION_START < (CURRENT_TIMESTAMP - '10 MINUTES'::INTERVAL)
+                      AND SESSION_CONFIRM = FALSE
+                      AND (SELECT COALESCE(COUNT(*), 0)
+                           FROM DNAUTHORIZATION.REFRESH_TOKENS AS REFRESH_TOKENS
+                           WHERE ACTIVE_SESSIONS.SESSION_ID = REFRESH_TOKENS.SESSION_ID) = 0;
+                ]]>
+            </SQL>
+            <SQL name="main">
+                <![CDATA[
+                    DELETE
+                    FROM DNAUTHORIZATION.ACTIVE_SESSIONS AS ACTIVE_SESSIONS
+                    WHERE SESSION_CONFIRM = TRUE
+                      AND (SELECT COALESCE(COUNT(*), 0)
+                           FROM DNAUTHORIZATION.REFRESH_TOKENS AS REFRESH_TOKENS
+                           WHERE ACTIVE_SESSIONS.SESSION_ID = REFRESH_TOKENS.SESSION_ID) = 0;
+                ]]>
+            </SQL>
+        </Query>
+    </QuerySet>
+</Definition>
