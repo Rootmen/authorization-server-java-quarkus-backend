@@ -86,15 +86,8 @@ public class SessionControlRepository {
         return databaseController.runningQuerySet("SESSION_CONTROL", "UPDATE_SESSION_INFORMATION", parameters, client).replaceWithVoid();
     }
 
-    public Uni<Session> removeOutdatedSession(PgPool client) {
-        return databaseController
-            .runningQuerySet("SESSION_CONTROL", "REMOVE_OLD_ACTIVE_SESSION", new HashMap<>(), client)
-            .onItem()
-            .transform(element -> element.get(0).get("main"))
-            .onItem()
-            .transform(RowSet::iterator)
-            .onItem()
-            .transform(iterator -> iterator.hasNext() ? Session.from(iterator.next()) : null);
+    public Uni<Void> removeOutdatedSession(PgPool client) {
+        return databaseController.runningQuerySet("SESSION_CONTROL", "REMOVE_OLD_ACTIVE_SESSION", new HashMap<>(), client).replaceWithVoid();
     }
 
     public Uni<RefreshToken> getUpdateToken(String token, PgPool client) {
@@ -110,10 +103,13 @@ public class SessionControlRepository {
             .transform(iterator -> iterator.hasNext() ? RefreshToken.from(iterator.next()) : null);
     }
 
-    public Uni<RefreshToken> addUpdateToken(String token, UUID accountId, PgPool client) {
+    public Uni<RefreshToken> addRefreshToken(String sessionId, String refreshToken, UUID accountId, String ip, String signature, PgPool client) {
         HashMap<String, ParameterInput> parameters = new HashMap<>();
-        parameters.put("SESSION_REFRESH_TOKEN", new ParameterInput("SESSION_REFRESH_TOKEN", token));
-        parameters.put("SESSION_ACCOUNT_ID", new ParameterInput("SESSION_ACCOUNT_ID", accountId.toString()));
+        parameters.put("SESSION_ID", new ParameterInput("SESSION_ID", sessionId));
+        parameters.put("ACCOUNT_ID", new ParameterInput("ACCOUNT_ID", accountId.toString()));
+        parameters.put("TOKEN_REFRESH", new ParameterInput("TOKEN_REFRESH", refreshToken));
+        parameters.put("TOKEN_IP", new ParameterInput("TOKEN_IP", ip));
+        parameters.put("TOKEN_SIGNATURE", new ParameterInput("TOKEN_SIGNATURE", signature));
         return databaseController
             .runningQuerySet("SESSION_CONTROL", "ADD_REFRESH_TOKEN", parameters, client)
             .onItem()
@@ -132,5 +128,17 @@ public class SessionControlRepository {
         parameters.put("ATTEMPT_SIGNATURE", new ParameterInput("ATTEMPT_SIGNATURE", signature));
         parameters.put("ATTEMPT_SUCCESS", new ParameterInput("ATTEMPT_SUCCESS", Boolean.valueOf(success).toString()));
         return databaseController.runningQuerySet("SESSION_CONTROL", "ADD_AUTHORIZATION_ATTEMPT", parameters, client).replaceWithVoid();
+    }
+
+    public Uni<Void> deleteRefreshToken(String refreshToken, PgPool client) {
+        HashMap<String, ParameterInput> parameters = new HashMap<>();
+        parameters.put("TOKEN_REFRESH", new ParameterInput("TOKEN_REFRESH", refreshToken));
+        return databaseController.runningQuerySet("SESSION_CONTROL", "DELETE_REFRESH_TOKEN", parameters, client).replaceWithVoid();
+    }
+
+    public Uni<Void> deleteSession(String sessionId, PgPool client) {
+        HashMap<String, ParameterInput> parameters = new HashMap<>();
+        parameters.put("SESSION_ID", new ParameterInput("SESSION_ID", sessionId));
+        return databaseController.runningQuerySet("SESSION_CONTROL", "DELETE_SESSION", parameters, client).replaceWithVoid();
     }
 }

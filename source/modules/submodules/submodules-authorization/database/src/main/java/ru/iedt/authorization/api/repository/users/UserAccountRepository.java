@@ -113,7 +113,7 @@ public class UserAccountRepository {
             .onItem()
             .transformToMulti(set -> Multi.createFrom().iterable(set))
             .onItem()
-            .transform(row -> row.getString("role_uuid"))
+            .transform(row -> row.getUUID("role_uuid").toString())
             .collect()
             .asList();
     }

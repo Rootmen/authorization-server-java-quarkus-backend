@@ -105,9 +105,12 @@ COMMENT ON COLUMN DNAUTHORIZATION.ACTIVE_SESSIONS.SESSION_TOKEN IS 'Токен �
 -- ТАБЛИЦА DNAUTHORIZATION.REFRESH_TOKENS
 CREATE TABLE IF NOT EXISTS DNAUTHORIZATION.REFRESH_TOKENS
 (
-    ACCOUNT_ID                UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID) NOT NULL,
-    TOKEN_REFRESH             TEXT UNIQUE                                                NOT NULL,
-    TOKEN_REFRESH_CREATE_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP                        NOT NULL
+    ACCOUNT_ID                UUID REFERENCES DNAUTHORIZATION.USERS_ACCOUNT (ACCOUNT_ID)   NOT NULL,
+    SESSION_ID                TEXT REFERENCES DNAUTHORIZATION.ACTIVE_SESSIONS (SESSION_ID) NOT NULL,
+    TOKEN_REFRESH             TEXT UNIQUE                                                  NOT NULL,
+    TOKEN_REFRESH_CREATE_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP                          NOT NULL,
+    TOKEN_IP                  TEXT                                                         NOT NULL,
+    TOKEN_SIGNATURE           TEXT                                                         NOT NULL
 );
 -- ДОБАВЛЕНИЕ КОММЕНТАРИЕВ К ТАБЛИЦЕ DNAUTHORIZATION.REFRESH_TOKENS И ЕЁ СТОЛБЦАМ
 COMMENT ON TABLE DNAUTHORIZATION.REFRESH_TOKENS IS 'Таблица со списком долгоживущих токенов';

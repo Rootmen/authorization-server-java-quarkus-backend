@@ -205,7 +205,8 @@
                     SELECT ROLE_UUID
                     FROM DNAUTHORIZATION.USER_ROLE
                     WHERE ACCOUNT_ID = $ACCOUNT_UUID$
-                      AND CURRENT_TIMESTAMP BETWEEN USER_ROLE_VALID_FROM AND USER_ROLE_VALID_TO;
+                          AND (CURRENT_TIMESTAMP BETWEEN USER_ROLE_VALID_FROM AND USER_ROLE_VALID_TO
+                            OR (USER_ROLE_VALID_TO IS NULL AND USER_ROLE_VALID_FROM < CURRENT_TIMESTAMP));
                 ]]>
             </SQL>
         </Query>

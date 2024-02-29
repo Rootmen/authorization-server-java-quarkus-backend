@@ -14,6 +14,7 @@ import ru.iedt.authorization.rest.session.ResultInformation;
 import ru.iedt.authorization.service.session.SessionControlService;
 import ru.iedt.authorization.validation.session.Confirm;
 import ru.iedt.authorization.validation.session.Initialization;
+import ru.iedt.authorization.validation.session.TokenUpdate;
 import ru.iedt.authorization.validation.session.UserUUID;
 
 @Path("api/v1/session")
@@ -59,8 +60,8 @@ public class Session extends BaseRestController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Обновление токена сессии", description = "Обновление сессии через токен")
-    public Uni<ResultConfirm> updateSession(Confirm session) {
+    public Uni<ResultConfirm> updateSession(@RestHeader("X-Account-id") UUID accountId, TokenUpdate tokenUpdate) {
         String ip = context.request().remoteAddress().hostAddress();
-        return this.sessionControlService.confirmSession(session.session_id(), session.confirm(), this.fingerprint, ip);
+        return this.sessionControlService.updateToken(accountId, tokenUpdate.tokenUpdate(), tokenUpdate.session_id(), this.fingerprint, ip);
     }
 }
