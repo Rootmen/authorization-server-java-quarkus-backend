@@ -32,16 +32,15 @@ test:
   only:
     - main
     - dev-release
-
 build-native:
   image: rootmen/gradle-docker-builder
   stage: build-native
   script:
-    - gradle :source:modules:module-rest-authorization-endpoint:build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+    - gradle :source:modules:endpoint:module-rest-authorization:build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
   artifacts:
     paths:
-      - source/modules/module-rest-authorization-endpoint/build/module-rest-authorization-endpoint-1.0-SNAPSHOT-runner
-      - source/modules/module-rest-authorization-endpoint/build/resources/*
+      - source/modules/endpoint/module-rest-authorization/build/module-rest-authorization-1.0-SNAPSHOT-runner
+      - source/modules/endpoint/module-rest-authorization/build/resources/*
     expire_in: 180 minutes
   only:
     - main
@@ -51,7 +50,7 @@ build-docker-rest-endpoint:
   image: rootmen/gradle-docker-builder
   stage: build-docker
   script:
-    - cd ./source/modules/module-rest-authorization-endpoint
+    - cd ./source/modules/endpoint/module-rest-authorization
     - docker build -f ./src/main/docker/Dockerfile.native -t authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" .
     - docker save authorization-server/module-rest-authorization-endpoint:"$CI_COMMIT_REF_NAME"-"$CI_COMMIT_SHORT_SHA" -o authorization-server.module-rest-authorization-endpoint.tar
     - mkdir -p "$CI_PROJECT_DIR"/docker/images/
@@ -59,6 +58,7 @@ build-docker-rest-endpoint:
   artifacts:
     paths:
       - docker/images/authorization-server.module-rest-authorization-endpoint.tar
+    expire_in: 180 minutes
   only:
     - main
 
