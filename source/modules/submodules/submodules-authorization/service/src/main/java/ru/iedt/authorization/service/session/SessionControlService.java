@@ -123,7 +123,7 @@ public class SessionControlService {
                     .transform(strings ->
                         Jwt
                             .groups(new HashSet<>(strings))
-                            .expiresIn(600L)
+                            .expiresIn(6000L)
                             .claim("app_url", appInformation.getRedirectUrl())
                             .claim("user", userAccount.getAccountName())
                             .claim("user_id", userAccount.getAccountId())
@@ -181,7 +181,7 @@ public class SessionControlService {
                     .transform(strings ->
                         Jwt
                             .groups(new HashSet<>(strings))
-                            .expiresIn(600L)
+                            .expiresIn(6000L)
                             .claim("app_url", appInformation.getRedirectUrl())
                             .claim("user", userAccount.getAccountName())
                             .claim("user_id", userAccount.getAccountId())

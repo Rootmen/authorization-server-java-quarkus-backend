@@ -14,6 +14,7 @@ sourceControl {
 		producesModule("ru.iedt.database.request:database-controller")
 		producesModule("ru.iedt.database.request:store")
 		producesModule("ru.iedt.database.request:structures")
+		producesModule("ru.iedt.database.request:task-controller")
 	}
 }
 
