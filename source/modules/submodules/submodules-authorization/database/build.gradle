@@ -13,9 +13,9 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-arc'
-    implementation 'ru.iedt.database.request:structures:1.0.18'
-    implementation 'ru.iedt.database.request:store:1.0.18'
-    implementation 'ru.iedt.database.request:database-controller:1.0.18'
+    implementation 'ru.iedt.database.request:structures:1.0.39'
+    implementation 'ru.iedt.database.request:store:1.0.39'
+    implementation 'ru.iedt.database.request:database-controller:1.0.39'
     implementation project(path: ':source:modules:exception')
     implementation project(path: ':source:modules:submodules:submodules-authorization:entity')
 

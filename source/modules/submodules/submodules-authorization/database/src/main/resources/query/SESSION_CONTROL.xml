@@ -31,18 +31,18 @@
         <Parameters>
             <Parameter name="SESSION_ID" type="string">
                 <When value="null"/>
-                <Otherwise><![CDATA[AND SESSION_ID = $SESSION_ID$]]></Otherwise>
+                <Otherwise><![CDATA[AND SESSION_ID = ${SESSION_ID}]]></Otherwise>
             </Parameter>
             <Parameter name="SESSION_ACCOUNT_ID" type="uuid">
                 <When value="null"/>
-                <Otherwise><![CDATA[AND SESSION_ACCOUNT_ID = $SESSION_ACCOUNT_ID$]]></Otherwise>
+                <Otherwise><![CDATA[AND SESSION_ACCOUNT_ID = ${SESSION_ACCOUNT_ID}]]></Otherwise>
             </Parameter>
         </Parameters>
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    $REF_SQL=SELECT_ACTIVE_SESSION$
-                    WHERE TRUE $SESSION_ID$ $SESSION_ACCOUNT_ID$;
+                    ${REF_SQL=SELECT_ACTIVE_SESSION}
+                    WHERE TRUE ${SESSION_ID} ${SESSION_ACCOUNT_ID};
                 ]]>
             </SQL>
         </Query>
@@ -75,17 +75,17 @@
                                                                 SESSION_AUTHORIZATION_KEY,
                                                                 SESSION_IP_ADDRESS,
                                                                 SESSION_SIGNATURE)
-                    VALUES ($SESSION_ID$,
-                            $SESSION_KEY$,
-                            $SESSION_ACCOUNT_ID$,
-                            $SESSION_APP_ID$,
-                            $SESSION_SERVER_PRIVATE_KEY$,
-                            $SESSION_SERVER_PUBLIC_KEY$,
-                            $SESSION_ACCOUNT_PUBLIC_KEY$,
-                            $SESSION_SCRAMBLER$,
-                            $SESSION_AUTHORIZATION_KEY$,
-                            $SESSION_IP_ADDRESS$,
-                            $SESSION_SIGNATURE$)
+                    VALUES (${SESSION_ID},
+                            ${SESSION_KEY},
+                            ${SESSION_ACCOUNT_ID},
+                            ${SESSION_APP_ID},
+                            ${SESSION_SERVER_PRIVATE_KEY},
+                            ${SESSION_SERVER_PUBLIC_KEY},
+                            ${SESSION_ACCOUNT_PUBLIC_KEY},
+                            ${SESSION_SCRAMBLER},
+                            ${SESSION_AUTHORIZATION_KEY},
+                            ${SESSION_IP_ADDRESS},
+                            ${SESSION_SIGNATURE})
                     RETURNING *;
                 ]]>
             </SQL>
@@ -102,9 +102,9 @@
                 <![CDATA[
                     UPDATE DNAUTHORIZATION.ACTIVE_SESSIONS
                     SET SESSION_CONFIRM = true,
-                        SESSION_TOKEN = $SESSION_TOKEN$,
+                        SESSION_TOKEN = ${SESSION_TOKEN},
                         SESSION_LAST_ACTIVITY = CURRENT_TIMESTAMP
-                    WHERE SESSION_ID = $SESSION_ID$;
+                    WHERE SESSION_ID = ${SESSION_ID};
                 ]]>
             </SQL>
         </Query>
@@ -113,14 +113,14 @@
         <Parameters>
             <Parameter name="SESSION_REFRESH_TOKENS" type="string">
                 <When value="null"/>
-                <Otherwise><![CDATA[WHERE SESSION_REFRESH_TOKENS = $SESSION_REFRESH_TOKENS$]]></Otherwise>
+                <Otherwise><![CDATA[WHERE SESSION_REFRESH_TOKENS = ${SESSION_REFRESH_TOKENS}]]></Otherwise>
             </Parameter>
         </Parameters>
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    $REF_SQL=SELECT_REFRESH_TOKEN$
-                    $SESSION_REFRESH_TOKENS$;
+                    ${REF_SQL=SELECT_REFRESH_TOKEN}
+                    ${SESSION_REFRESH_TOKENS};
                 ]]>
             </SQL>
         </Query>
@@ -137,7 +137,7 @@
             <SQL name="main">
                 <![CDATA[
                     INSERT INTO DNAUTHORIZATION.AUTHORIZATION_LOG_ATTEMPT(ACCOUNT_ID, APP_ID, LOG_IP, LOG_SIGNATURE, LOG_SUCCESS)
-                    VALUES ($ATTEMPT_ACCOUNT_ID$, $ATTEMPT_APP_ID$, $ATTEMPT_IP$, $ATTEMPT_SIGNATURE$, $ATTEMPT_SUCCESS$);
+                    VALUES (${ATTEMPT_ACCOUNT_ID}, ${ATTEMPT_APP_ID}, ${ATTEMPT_IP}, ${ATTEMPT_SIGNATURE}, ${ATTEMPT_SUCCESS});
                 ]]>
             </SQL>
         </Query>
@@ -154,7 +154,7 @@
             <SQL name="main">
                 <![CDATA[
                     INSERT INTO  DNAUTHORIZATION.REFRESH_TOKENS(ACCOUNT_ID, SESSION_ID, TOKEN_REFRESH, TOKEN_IP, TOKEN_SIGNATURE)
-                    VALUES ($ACCOUNT_ID$, $SESSION_ID$, $TOKEN_REFRESH$, $TOKEN_IP$, $TOKEN_SIGNATURE$)
+                    VALUES (${ACCOUNT_ID}, ${SESSION_ID}, ${TOKEN_REFRESH}, ${TOKEN_IP}, ${TOKEN_SIGNATURE})
                     RETURNING *;
                 ]]>
             </SQL>
@@ -169,7 +169,7 @@
                 <![CDATA[
                     DELETE
                     FROM DNAUTHORIZATION.REFRESH_TOKENS
-                    WHERE TOKEN_REFRESH = $TOKEN_REFRESH$;
+                    WHERE TOKEN_REFRESH = ${TOKEN_REFRESH};
                 ]]>
             </SQL>
         </Query>
@@ -183,7 +183,7 @@
                 <![CDATA[
                     DELETE
                     FROM DNAUTHORIZATION.ACTIVE_SESSIONS
-                    WHERE SESSION_ID = $SESSION_ID$;
+                    WHERE SESSION_ID = ${SESSION_ID};
                 ]]>
             </SQL>
         </Query>

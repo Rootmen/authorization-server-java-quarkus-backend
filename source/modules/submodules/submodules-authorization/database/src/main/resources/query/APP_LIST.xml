@@ -13,18 +13,18 @@
         <Parameters>
             <Parameter name="APP_NAME" type="string">
                 <When value="null"/>
-                <Otherwise><![CDATA[AND APP_NAME = $APP_NAME$]]></Otherwise>
+                <Otherwise><![CDATA[AND APP_NAME = ${APP_NAME}]]></Otherwise>
             </Parameter>
             <Parameter name="APP_ID" type="uuid">
                 <When value="null"/>
-                <Otherwise><![CDATA[AND APP_ID = $APP_ID$]]></Otherwise>
+                <Otherwise><![CDATA[AND APP_ID = ${APP_ID}]]></Otherwise>
             </Parameter>
         </Parameters>
         <Query>
             <SQL name="main">
                 <![CDATA[
-                    $REF_SQL=SELECT_APP_LIST$
-                    WHERE TRUE $APP_NAME$ $APP_ID$;
+                    ${REF_SQL=SELECT_APP_LIST}
+                    WHERE TRUE ${APP_NAME} ${APP_ID};
                 ]]>
             </SQL>
         </Query>
@@ -41,8 +41,8 @@
         <Query>
             <SQL name="main">
                 <![CDATA[
-                INSERT INTO $REF_SQL=SCHEMA_NAME$.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_REDIRECT_URL, APP_IMAGE) VALUES (
-                    $APP_ID$, $APP_NAME$, $APP_SECRET$, $APP_TOKEN_SECRET$, $APP_REDIRECT_URL$, $APP_IMAGE$
+                INSERT INTO ${REF_SQL=SCHEMA_NAME}.APP_LIST(APP_ID, APP_NAME, APP_SECRET, APP_TOKEN_SECRET, APP_REDIRECT_URL, APP_IMAGE) VALUES (
+                    ${APP_ID}, ${APP_NAME}, ${APP_SECRET}, ${APP_TOKEN_SECRET}, ${APP_REDIRECT_URL}, ${APP_IMAGE}
                 );
                 ]]>
             </SQL>
@@ -59,12 +59,12 @@
         <Query>
             <SQL name="main">
                 <![CDATA[
-                UPDATE $REF_SQL=SCHEMA_NAME$.APP_LIST
-                SET APP_NAME            = $APP_NAME$,
-                    APP_SECRET          = $APP_SECRET$,
-                    APP_TOKEN_SECRET    = $APP_TOKEN_SECRET$,
-                    APP_REDIRECT_URL    = $APP_REDIRECT_URL$
-                WHERE APP_ID = $APP_ID$
+                UPDATE ${REF_SQL=SCHEMA_NAME}.APP_LIST
+                SET APP_NAME            = ${APP_NAME},
+                    APP_SECRET          = ${APP_SECRET},
+                    APP_TOKEN_SECRET    = ${APP_TOKEN_SECRET},
+                    APP_REDIRECT_URL    = ${APP_REDIRECT_URL}
+                WHERE APP_ID = ${APP_ID}
                 RETURNING *;
                 ]]>
             </SQL>
