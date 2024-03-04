@@ -37,3 +37,10 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
